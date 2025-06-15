@@ -1,4 +1,4 @@
-'use client';
+// 'use client';
 
 import Link from 'next/link';
 import Image from 'next/image';
@@ -9,11 +9,11 @@ export default function Navbar() {
 
   return (
     <div>
-      <div className="p-2 bg-[#f0b22b] flex text-center font-semibold justify-center w-full text-sm">
+      <div className="p-2 bg-[#6B0F10] flex text-center text-white font-semibold justify-center w-full text-sm">
         2025 Placements will be available from August 15th
       </div>
 
-      <nav className="p-2 flex justify-between w-full px-6 items-center text-md relative bg-white shadow-md">
+      <nav className="p-2 z-30 flex justify-between w-full px-6 items-center text-md relative bg-white shadow-md">
         {/* Logo */}
         <Image src="/logo.jpg" width={70} height={70} alt='Logo Of The Website' />
 
