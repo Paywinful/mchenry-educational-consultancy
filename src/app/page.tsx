@@ -151,7 +151,7 @@ export default function Home() {
       </div>
 
       {/* FAQ */}
-      <div className="w-full bg-white px-8 py-12 flex flex-col items-center">
+      <div id='faq' className="w-full bg-white px-8 py-12 flex flex-col items-center">
         <h2 className="text-3xl font-extrabold mb-6">FREQUENTLY ASKED QUESTIONS</h2>
         <div className="w-full max-w-2xl">
           <FAQItem
