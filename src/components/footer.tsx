@@ -3,9 +3,10 @@ import {
   Facebook,
   Twitter,
   Linkedin,
-  Instagram
+  Instagram,
 } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
 
 export default function Footer() {
   return (
@@ -21,10 +22,10 @@ export default function Footer() {
         <div>
           <h3 className="text-white text-sm font-semibold mb-3">Useful Links</h3>
           <ul className="space-y-2 text-sm">
-            <li><a href="/" className="hover:text-white text-[10px] opacity-60 hover:underline">Home</a></li>
-            <li><a href="/about" className="hover:text-white text-[10px] opacity-60 hover:underline">About Us</a></li>
-            <li><a href="#" className="hover:text-white text-[10px] opacity-60 hover:underline">Services</a></li>
-            <li><a href="#" className="hover:text-white text-[10px] opacity-60 hover:underline">Terms of service</a></li>
+            <li><Link href="/" className="hover:text-white text-[10px] opacity-60 hover:underline">Home</Link></li>
+            <li><Link href="/about" className="hover:text-white text-[10px] opacity-60 hover:underline">About Us</Link></li>
+            <li><Link href="#" className="hover:text-white text-[10px] opacity-60 hover:underline">Services</Link></li>
+            <li><Link href="#" className="hover:text-white text-[10px] opacity-60 hover:underline">Terms of service</Link></li>
           </ul>
         </div>
 
@@ -40,10 +41,10 @@ export default function Footer() {
         <div>
           <h3 className="text-white font-semibold mb-3 text-sm">Follow Us</h3>
           <div className="flex space-x-4">
-            <a href="#" className="hover:text-white"><Facebook size={18} /></a>
-            <a href="#" className="hover:text-white"><Twitter size={18} /></a>
-            <a href="#" className="hover:text-white"><Linkedin size={18} /></a>
-            <a href="#" className="hover:text-white"><Instagram size={18} /></a>
+            <Link href="#" className="hover:text-white"><Facebook size={18} /></Link>
+            <Link href="#" className="hover:text-white"><Twitter size={18} /></Link>
+            <Link href="#" className="hover:text-white"><Linkedin size={18} /></Link>
+            <Link href="#" className="hover:text-white"><Instagram size={18} /></Link>
           </div>
         </div>
       </div>
