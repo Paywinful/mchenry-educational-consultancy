@@ -33,16 +33,16 @@ export default function About() {
                 <h2 className="text-center text-3xl font-bold mb-12">Our Story</h2>
                 <div className="flex flex-col md:flex-row items-center justify-between mx-20">
                     <p className="w-4xl mx-10 text-xs md:text-sm mb-4 max-w-md">
-                        Founded with a vision to bridge the gap between international students and Ghana's prestigious educational institutions, McHenry Educational Consultancy was born from the understanding that quality education should be accessible to all, regardless of geographical boundaries.
+                        {`Founded with a vision to bridge the gap between international students and Ghana's prestigious educational institutions, McHenry Educational Consultancy was born from the understanding that quality education should be accessible to all, regardless of geographical boundaries.`}
                         <br /><br />
-                        Our journey began when we recognized the untapped potential of Ghana's higher education sector and the growing demand from international students seeking authentic, affordable, and quality education in a culturally rich environment.
+                        {`Our journey began when we recognized the untapped potential of Ghana's higher education sector and the growing demand from international students seeking authentic, affordable, and quality education in a culturally rich environment.`}
                     </p>
                     <div className="w-4xl mx-10 bg-white justify-even flex-col flex items-center space-y-16 rounded-lg p-10">
                         <School color="#6B0F10" size={35} />
                         <div className="flex flex-col items-center space-y-4">
                             <p className="text-md font-extrabold">Our Goal</p>
                             <p className="text-sm max-w-md">
-                                To create seamless pathways for international students to access Ghana's top universities while ensuring comprehensive support throughout their academic journey.
+                                {`To create seamless pathways for international students to access Ghana's top universities while ensuring comprehensive support throughout their academic journey.`}
                             </p>
                         </div>
                     </div>
@@ -210,7 +210,7 @@ export default function About() {
                         <div>
                             <p className="font-bold text-md">Institutional Partnerships</p>
                             <p className="text-sm text-gray-600">
-                                Strong relationships with Ghana's top universities and colleges.
+                                {`Strong relationships with Ghana's top universities and colleges.`}
                             </p>
                         </div>
                     </div>

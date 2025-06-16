@@ -95,28 +95,32 @@ export default function Home() {
         ))}
       </div>
 
-      {/* Secure & Transparent */}
-      <div className="w-full py-16 bg-[#D9D9D9]">
-        <div className="flex justify-center text-4xl font-extrabold text-center">
-          <h2 className="text-[#f0b22b] mx-3">Secure</h2>
-          <h2>& Transparent</h2>
-        </div>
-        <div className="md:flex justify-between py-16 mx-12">
-          {[
-            ['View Placement', <FolderLock size={32} className="text-[#f0b22b]" />],
-            ['Enter your ID', <ShieldCheck size={32} className="text-[#f0b22b]" />],
-            ['Confirm / Download', <CalendarCheck size={32} className="text-[#f0b22b]" />],
-          ].map(([title, icon], index) => (
-            <div key={index} className="flex flex-col items-center text-center">
-              {icon}
-              <h1 className="text-sm font-black mt-4">{title}</h1>
-              <p className="text-xs mt-2 w-72">
-                Simply input your unique identification number to begin the process
-              </p>
-            </div>
-          ))}
-        </div>
+{/* Secure & Transparent */}
+<div className="w-full py-16 bg-[#D9D9D9]">
+  <div className="flex justify-center text-4xl font-extrabold text-center">
+    <h2 className="text-[#f0b22b] mx-3">Secure</h2>
+    <h2>& Transparent</h2>
+  </div>
+  <div className="md:flex justify-between py-16 mx-12">
+    {(
+      [
+        ['View Placement', FolderLock],
+        ['Enter your ID', ShieldCheck],
+        ['Confirm / Download', CalendarCheck],
+      ] as [string, React.ElementType][]
+    ).map(([title, Icon], index) => (
+      <div key={index} className="flex flex-col items-center text-center">
+        <Icon size={32} className="text-[#f0b22b]" />
+        <h1 className="text-sm font-black mt-4">{title}</h1>
+        <p className="text-xs mt-2 w-72">
+          Simply input your unique identification number to begin the process
+        </p>
       </div>
+    ))}
+  </div>
+</div>
+
+
 
       {/* School Crests */}
       <div className="w-full py-8 bg-white flex justify-between items-center md:px-24">
@@ -141,7 +145,7 @@ export default function Home() {
         <div className="w-3/5 h-80 bg-white flex flex-col justify-between py-10 items-center text-center rounded-xl space-y-4">
           <Quote size={34} color="#f0b22b" />
           <p className="text-lg w-2/3">
-            "I checked my posting from my phone and downloaded my letter in minutes — no stress."
+           {` "I checked my posting from my phone and downloaded my letter in minutes — no stress."`}
           </p>
           <div>
             <p className="font-bold text-sm">Adjoa</p>

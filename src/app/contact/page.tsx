@@ -1,7 +1,7 @@
 'use client';
 
 import Image from "next/image";
-import { School, Quote } from 'lucide-react';
+import { Quote } from 'lucide-react';
 
 export default function Contact() {
     return (
@@ -22,7 +22,7 @@ export default function Contact() {
                             Contact Us
                         </h1>
                         <p className="text-md mb-10 md:mb-12 font-thin">
-                            Ready to start your educational journey in Ghana? We're here to help! Reach out to us for personalized guidance and support.
+                           {` Ready to start your educational journey in Ghana? We're here to help! Reach out to us for personalized guidance and support.`}
                         </p>
                     </div>
                 </div>
