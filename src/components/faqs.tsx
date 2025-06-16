@@ -20,7 +20,7 @@ export default function FAQItem({ question, answer }: FAQItemProps) {
         <ChevronDown
           size={20}
           className={`transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}
-          color='#f0b22b'
+          color='#6B0F10'
         />
       </button>
       {isOpen && (

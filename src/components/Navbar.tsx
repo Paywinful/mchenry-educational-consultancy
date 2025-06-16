@@ -21,7 +21,7 @@ export default function Navbar() {
         <div className="hidden md:flex space-x-8 items-center">
           <Link href="/" className="hover:underline">Home</Link>
           <Link href="/about" className="hover:underline">About</Link>
-          <Link href="/#faq" scroll={true} className="hover:underline">FAQ</Link>
+          <a href="/#faq" className="hover:underline">FAQ</a>
           <Link href="/contact" className="hover:underline">Contact</Link>
           <Link href="/contact" className="p-2 px-7 bg-black text-white rounded-3xl">Find a School</Link>
         </div>

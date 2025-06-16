@@ -1,7 +1,7 @@
 'use client';
 
 import Image from "next/image";
-import { School, Quote } from 'lucide-react';
+import { School, Quote, Shield, BookOpenCheck, PencilRuler, Lightbulb, UsersRound } from 'lucide-react';
 
 export default function About() {
     return (
@@ -87,35 +87,35 @@ export default function About() {
                 <div className="flex flex-col md:flex-row justify-around gap-10">
                     <div className="flex flex-col items-center text-center max-w-xs mx-auto">
                         <div className="w-20 h-20 rounded-full bg-[#6B0F10] p-1 flex items-center justify-center mb-4">
-                            <School color="#FFFBD6" size={50} />
+                            <Shield color="#FFFBD6" size={50} />
                         </div>
                         <p className="text-sm font-extrabold">Integrity</p>
                         <p className="text-xs">Upholding the highest ethical standards in every action.</p>
                     </div>
                     <div className="flex flex-col items-center text-center max-w-xs mx-auto">
                         <div className="w-20 h-20 rounded-full bg-[#FFFBD6] p-1 flex items-center justify-center mb-4">
-                            <School color="#6B0F10" size={50} />
+                            <BookOpenCheck color="#6B0F10" size={50} />
                         </div>
                         <p className="text-sm font-extrabold">Excellence</p>
                         <p className="text-xs">Delivering unmatched quality through continuous improvement.</p>
                     </div>
-                    <div className="flex flex-col items-center text-center max-w-xs mx-auto">
+                    <div className="flex flex-col items-center text-center mt-20 max-w-xs mx-auto">
                         <div className="w-20 h-20 rounded-full bg-[#6B0F10] p-1 flex items-center justify-center mb-4">
-                            <School color="#FFFBD6" size={50} />
+                            <PencilRuler color="#FFFBD6" size={50} />
                         </div>
                         <p className="text-sm font-extrabold">Disciplne</p>
                         <p className="text-xs">Fostering a work culture of accountability, respect, and professionalism</p>
                     </div>
                     <div className="flex flex-col items-center text-center max-w-xs mx-auto">
                         <div className="w-20 h-20 rounded-full bg-[#FFFBD6] p-1 flex items-center justify-center mb-4">
-                            <School color="#6B0F10" size={50} />
+                            <Lightbulb color="#6B0F10" size={50} />
                         </div>
                         <p className="text-sm font-extrabold">Innovation</p>
                         <p className="text-xs">Fostering a work culture of accountability, respect, and professionalism</p>
                     </div>
                     <div className="flex flex-col items-center text-center max-w-xs mx-auto">
                         <div className="w-20 h-20 rounded-full bg-[#6B0F10] p-1 flex items-center justify-center mb-4">
-                            <School color="#FFFBD6" size={50} />
+                            <UsersRound color="#FFFBD6" size={50} />
                         </div>
                         <p className="text-sm font-extrabold">Customer-Centricity</p>
                         <p className="text-xs">Placing client and passenger needs at the heart of our operations.</p>
@@ -125,7 +125,7 @@ export default function About() {
 
             {/* Meet Our Team */}
             <div className="w-full py-12 px-10">
-                <h2 className="text-center text-3xl font-extrabold mb-12">Meet Our Team</h2>
+                <h2 className="text-center text-3xl font-extrabold mb-12">Meet Our<span className="text-[#6B0F10] px-2">Team</span></h2>
                 <div className="flex flex-col md:flex-row justify-center items-center gap-10 px-4 md:px-20">
                     {/* Team Member 1 */}
                     <div className="bg-white rounded-lg shadow-md max-w-xs w-full overflow-hidden">
