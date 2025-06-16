@@ -5,6 +5,7 @@ import {
   Linkedin,
   Instagram
 } from 'lucide-react';
+import Image from 'next/image';
 
 export default function Footer() {
   return (
@@ -12,7 +13,7 @@ export default function Footer() {
       <div className="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-8">
         {/* Logo and Name */}
         <div className="flex items-center md:mr-48 md:mt-[-68px]">
-          <img src="/logonobg.png" alt="McHenry Logo" className="w-16 h-16 mb-2 bg-[#202020] mx-4" />
+          <Image src="/logonobg.png" width={100} height={100} alt="McHenry Logo" className="w-16 h-16 mb-2 bg-[#202020] mx-4" />
           <h2 className="text-xs w-20 font-semibold border-l-1 py-1 px-2 border-white ">McHenry Educational Consultancy</h2>
         </div>
 
