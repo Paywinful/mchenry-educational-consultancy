@@ -37,12 +37,12 @@ export default function About() {
                         <br /><br />
                         {`Our journey began when we recognized the untapped potential of Ghana's higher education sector and the growing demand from international students seeking authentic, affordable, and quality education in a culturally rich environment.`}
                     </p>
-                    <div className="w-4xl mx-10 bg-white justify-even flex-col flex items-center space-y-8 md:space-y-16 rounded-lg p-10">
+                    <div className="w-4xl mx-10 bg-white justify-even flex-col flex items-center space-y-8 md:space-y-12 rounded-lg p-10">
                         <School color="#6B0F10" size={35} />
                         <div className="flex flex-col items-center space-y-4">
                             <p className="text-md font-extrabold">Our Goal</p>
                             <p className="text-sm text-center w-84 md:max-w-md">
-                                {`To create seamless pathways for international students to access Ghana's top universities while ensuring comprehensive support throughout their academic journey.`}
+                                Making education, knowledge & technology globally common & accessible.
                             </p>
                         </div>
                     </div>
@@ -59,7 +59,7 @@ export default function About() {
                         <div className="flex flex-col items-center space-y-4">
                             <p className="text-md text-[#6B0F10] font-extrabold">Our Mission</p>
                             <p className="text-sm h-24 text-center max-w-md">
-                                To provide comprehensive, reliable, and professional security and airport assistance services that ensure the safety, comfort, and satisfaction of all clients grounded in law enforcement standards and enhanced by modern technology.
+                               With discipline, determination & dedication through this consultancy, education, knowledge & technology can benefit all the people around the globe.
                             </p>
                         </div>
                     </div>
@@ -70,7 +70,7 @@ export default function About() {
                         <div className="flex flex-col items-center space-y-4">
                             <p className="text-md text-[#6B0F10] font-extrabold">Our Vision</p>
                             <p className="text-sm h-24 text-center">
-                                To become a leading name in security and airport assistance solutions across Ghana and West Africa, known for integrity, innovation, and exceptional service delivery.
+                                The world has become a global village. Education, knowledge & technology are not centered in one country or abroad. Minds that develop them are found all over the world irrespective of gender, colour, race, ethnicity or country of origin.
                             </p>
                         </div>
                     </div>
