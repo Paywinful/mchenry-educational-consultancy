@@ -50,55 +50,55 @@ export default function Home() {
 
       {/* How It Works */}
       <div className="w-full px-8 py-8 bg-white">
-  <h2 className="text-center text-3xl font-bold mb-12">How It Works</h2>
-  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
-    
-    {/* Card 1 */}
-    <div className="bg-[#D9D9D9] p-10 rounded-xl shadow-md text-center">
-      <div className="w-14 h-14 rounded-full bg-[#6B0F10] flex items-center justify-center mx-auto mb-4">
-        <UserRoundPlus className="w-6 h-6 text-white" />
-      </div>
-      <p className="text-sm font-extrabold mb-2">Sign Up & Consultation</p>
-      <p className="text-xs text-gray-700">
-        Simply input your unique identification number to begin the process
-      </p>
-    </div>
+        <h2 className="text-center text-3xl font-bold mb-12">How It Works</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
 
-    {/* Card 2 */}
-    <div className="bg-[#D9D9D9] p-10 rounded-xl shadow-md text-center">
-      <div className="w-14 h-14 rounded-full bg-[#6B0F10] flex items-center justify-center mx-auto mb-4">
-        <GraduationCap className="w-6 h-6 text-white" />
-      </div>
-      <p className="text-sm font-extrabold mb-2">Select Programs & Apply</p>
-      <p className="text-xs text-gray-700">
-        We advise on schools, deadlines, and complete your application
-      </p>
-    </div>
+          {/* Card 1 */}
+          <div className="bg-[#D9D9D9] p-10 rounded-xl shadow-md text-center">
+            <div className="w-14 h-14 rounded-full bg-[#6B0F10] flex items-center justify-center mx-auto mb-4">
+              <UserRoundPlus className="w-6 h-6 text-white" />
+            </div>
+            <p className="text-sm font-extrabold mb-2">Sign Up & Consultation</p>
+            <p className="text-xs text-gray-700">
+              Simply input your unique identification number to begin the process
+            </p>
+          </div>
 
-    {/* Card 3 */}
-    <div className="bg-[#D9D9D9] p-10 rounded-xl shadow-md text-center">
-      <div className="w-14 h-14 rounded-full bg-[#6B0F10] flex items-center justify-center mx-auto mb-4">
-        <Plane className="w-6 h-6 text-white" />
-      </div>
-      <p className="text-sm font-extrabold mb-2">Visa & Travel Assistance</p>
-      <p className="text-xs text-gray-700">
-        Document guidance, embassy liaison, flight booking
-      </p>
-    </div>
+          {/* Card 2 */}
+          <div className="bg-[#D9D9D9] p-10 rounded-xl shadow-md text-center">
+            <div className="w-14 h-14 rounded-full bg-[#6B0F10] flex items-center justify-center mx-auto mb-4">
+              <GraduationCap className="w-6 h-6 text-white" />
+            </div>
+            <p className="text-sm font-extrabold mb-2">Select Programs & Apply</p>
+            <p className="text-xs text-gray-700">
+              We advise on schools, deadlines, and complete your application
+            </p>
+          </div>
 
-    {/* Card 4 */}
-    <div className="bg-[#D9D9D9] p-10 rounded-xl shadow-md text-center">
-      <div className="w-14 h-14 rounded-full bg-[#6B0F10] flex items-center justify-center mx-auto mb-4">
-        <School className="w-6 h-6 text-white" />
-      </div>
-      <p className="text-sm font-extrabold mb-2">Accommodation & Pre-Departure</p>
-      <p className="text-xs text-gray-700">
-        Arrange housing, cultural orientation
-      </p>
-    </div>
+          {/* Card 3 */}
+          <div className="bg-[#D9D9D9] p-10 rounded-xl shadow-md text-center">
+            <div className="w-14 h-14 rounded-full bg-[#6B0F10] flex items-center justify-center mx-auto mb-4">
+              <Plane className="w-6 h-6 text-white" />
+            </div>
+            <p className="text-sm font-extrabold mb-2">Visa & Travel Assistance</p>
+            <p className="text-xs text-gray-700">
+              Document guidance, embassy liaison, flight booking
+            </p>
+          </div>
 
-  </div>
-</div>
+          {/* Card 4 */}
+          <div className="bg-[#D9D9D9] p-10 rounded-xl shadow-md text-center">
+            <div className="w-14 h-14 rounded-full bg-[#6B0F10] flex items-center justify-center mx-auto mb-4">
+              <School className="w-6 h-6 text-white" />
+            </div>
+            <p className="text-sm font-extrabold mb-2">Accommodation & Pre-Departure</p>
+            <p className="text-xs text-gray-700">
+              Arrange housing, cultural orientation
+            </p>
+          </div>
+
+        </div>
+      </div>
 
 
       {/* Find Section */}
@@ -132,29 +132,29 @@ export default function Home() {
         ))}
       </div>
 
-{/* Secure & Transparent */}
-<div className="w-full py-16 bg-[#D9D9D9]">
-  <div className="flex justify-center text-4xl font-extrabold text-center">
-    <h2 className="text-[#6B0F10] mx-3">Secure <span className='text-black'>& Transparent</span></h2>
-  </div>
-  <div className="md:flex justify-between py-16 mx-12">
-    {(
-      [
-        ['View Placement', FolderLock],
-        ['Enter your ID', ShieldCheck],
-        ['Confirm / Download', CalendarCheck],
-      ] as [string, React.ElementType][]
-    ).map(([title, Icon], index) => (
-      <div key={index} className="flex flex-col items-center text-center">
-        <Icon size={32} className="text-[#6B0F10]" />
-        <h1 className="text-sm font-black mt-4">{title}</h1>
-        <p className="text-xs mt-2 w-72">
-          Simply input your unique identification number to begin the process
-        </p>
+      {/* Secure & Transparent */}
+      <div className="w-full py-16 bg-[#D9D9D9]">
+        <div className="flex justify-center text-4xl font-extrabold text-center">
+          <h2 className="text-[#6B0F10] mx-3">Secure <span className='text-black'>& Transparent</span></h2>
+        </div>
+        <div className="md:flex justify-between py-16 mx-12">
+          {(
+            [
+              ['View Placement', FolderLock],
+              ['Enter your ID', ShieldCheck],
+              ['Confirm / Download', CalendarCheck],
+            ] as [string, React.ElementType][]
+          ).map(([title, Icon], index) => (
+            <div key={index} className="flex flex-col items-center text-center">
+              <Icon size={32} className="text-[#6B0F10]" />
+              <h1 className="text-sm font-black mt-4">{title}</h1>
+              <p className="text-xs mt-2 w-72">
+                Simply input your unique identification number to begin the process
+              </p>
+            </div>
+          ))}
+        </div>
       </div>
-    ))}
-  </div>
-</div>
 
 
 
@@ -179,9 +179,11 @@ export default function Home() {
           Student Testimonials
         </h2>
         <div className="w-3/5 h-80 bg-white flex flex-col justify-between py-10 items-center text-center rounded-xl space-y-4">
-          <Quote size={34} color="#6B0F10" />
+          <div className="w-10 h-10 flex items-center justify-center shrink-0">
+            <Quote size={34} color="#6B0F10" />
+          </div>
           <p className="text-lg w-2/3">
-           {` "I checked my posting from my phone and downloaded my letter in minutes — no stress."`}
+            {` "I checked my posting from my phone and downloaded my letter in minutes — no stress."`}
           </p>
           <div>
             <p className="font-bold text-sm">Adjoa</p>
