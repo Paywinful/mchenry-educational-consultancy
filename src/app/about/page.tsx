@@ -30,18 +30,18 @@ export default function About() {
 
             {/* Our Story */}
             <div className="w-full px-8 py-8 bg-[#F3F3F3] ">
-                <h2 className="text-center text-3xl font-bold mb-12">Our Story</h2>
+                <h2 className="text-center text-3xl font-bold mb-4 md:mb-12">Our Story</h2>
                 <div className="flex flex-col md:flex-row items-center justify-between mx-20">
                     <p className="md:w-4xl mx-10 w-84 text-xs md:text-sm mb-4 md:max-w-md">
                         {`Founded with a vision to bridge the gap between international students and Ghana's prestigious educational institutions, McHenry Educational Consultancy was born from the understanding that quality education should be accessible to all, regardless of geographical boundaries.`}
                         <br /><br />
                         {`Our journey began when we recognized the untapped potential of Ghana's higher education sector and the growing demand from international students seeking authentic, affordable, and quality education in a culturally rich environment.`}
                     </p>
-                    <div className="w-4xl mx-10 bg-white justify-even flex-col flex items-center space-y-16 rounded-lg p-10">
+                    <div className="w-4xl mx-10 bg-white justify-even flex-col flex items-center space-y-8 md:space-y-16 rounded-lg p-10">
                         <School color="#6B0F10" size={35} />
                         <div className="flex flex-col items-center space-y-4">
                             <p className="text-md font-extrabold">Our Goal</p>
-                            <p className="text-sm w-84 md:max-w-md">
+                            <p className="text-sm text-center w-84 md:max-w-md">
                                 {`To create seamless pathways for international students to access Ghana's top universities while ensuring comprehensive support throughout their academic journey.`}
                             </p>
                         </div>
@@ -50,9 +50,9 @@ export default function About() {
             </div>
 
             {/* Mission & Vision */}
-            <div className="w-full px-18 py-28 bg-white ">
+            <div className="w-full px-18 md:py-28 bg-white ">
                 <div className="flex flex-col md:flex-row items-center justify-between mx-20 ">
-                    <div className="w-3xl mx-10 bg-white shadow-xl max-w-md my-4 md:my-0 justify-even flex-col flex items-center space-y-16 rounded-lg p-14">
+                    <div className="w-3xl mx-10 bg-white shadow-xl max-w-md my-4 md:my-0 justify-even flex-col flex items-center  md:space-y-16 rounded-lg p-14">
                         <div className="w-14 h-14 rounded-full bg-[#6B0F10] flex items-center justify-center mx-auto mb-4">
                             <School color="#ffff" size={35} />
                         </div>
