@@ -12,8 +12,28 @@ import {
   GraduationCap,
   Plane
 } from 'lucide-react';
+import { useEffect } from 'react';
+import { useRouter } from 'next/router';
+import { usePathname } from 'next/navigation';
+
+
 
 export default function Home() {
+
+  const pathname = usePathname();
+
+useEffect(() => {
+  if (window?.location.hash === '#faq') {
+    const el = document.getElementById('faq');
+    if (el) {
+      setTimeout(() => {
+        el.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    }
+  }
+}, [pathname]);
+
+
   return (
     <div>
       {/* Hero Section */}
