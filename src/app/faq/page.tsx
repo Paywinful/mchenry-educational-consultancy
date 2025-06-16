@@ -12,7 +12,7 @@ export default function FAQPage() {
       <div className="w-full max-w-2xl mb-8 bg-[#D9D9D9] rounded-xl p-6 text-center shadow">
         <Quote size={30} color="#6B0F10" className="mx-auto mb-2" />
         <p className="text-sm italic">
-          "These are the most common questions we get. If you're still unsure, reach out to us anytime."
+          {`"These are the most common questions we get. If you're still unsure, reach out to us anytime."`}
         </p>
       </div>
 
