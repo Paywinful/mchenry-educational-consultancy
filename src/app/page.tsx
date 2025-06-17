@@ -17,9 +17,9 @@ import {
 
 export default function Home() {
   return (
-    <div>
+    <div className='overflow-x-hidden'>
       {/* Hero Section */}
-      <div className="relative w-full h-screen">
+      <div className="relative w-full h-screen ">
         <Image
           src="/hero1.jpg"
           alt="Hero Section"
