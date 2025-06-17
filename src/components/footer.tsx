@@ -51,7 +51,7 @@ export default function Footer() {
 
       {/* Bottom Text */}
       <div className="mt-12 text-center text-xs text-gray-400">
-        &copy; Copyright <span className="font-semibold text-white">EXISTHQ</span>, All Rights Reserved
+        &copy; Copyright <span className="font-semibold text-white">2025 Mchenry Educational Consultancy</span>, All Rights Reserved
       </div>
     </footer>
   );
