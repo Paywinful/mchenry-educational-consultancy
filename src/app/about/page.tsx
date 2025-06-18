@@ -58,7 +58,7 @@ export default function About() {
                         </div>
                         <div className="flex flex-col items-center space-y-4">
                             <p className="text-md text-[#6B0F10] font-extrabold">Our Mission</p>
-                            <p className="text-sm h-24 text-center max-w-md">
+                            <p className="md:text-sm text-xs h-24 text-center max-w-md">
                               At McHenry Educational Consultancy Services Ltd, our mission is to bridge global educational opportunities with African potential by promoting access to high-quality tertiary education across borders. We are dedicated to guiding students, families, and institutions through trusted advisory services, university placements, academic counseling, and capacity-building initiatives that foster personal growth, global citizenship, and national development.
                             </p>
                         </div>
