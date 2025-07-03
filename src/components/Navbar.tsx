@@ -23,7 +23,7 @@ export default function Navbar() {
           <Link href="/about" className="hover:underline">About</Link>
           <a href="/faq" className="hover:underline">FAQ</a>
           <Link href="/contact" className="hover:underline">Contact</Link>
-          <Link href="/contact" className="p-2 px-7 bg-black text-white rounded-3xl">Find a School</Link>
+          <Link href="/portal" className="p-2 px-7 bg-black text-white rounded-3xl">Find a School</Link>
         </div>
 
         {/* Hamburger Icon (Mobile) */}
