@@ -1,4 +1,4 @@
-import StudentSidebar from "@/components/dashboard/StudentSidebar";
+// import StudentSidebar from "@/components/dashboard/StudentSidebar";
 import Image from "next/image";
 
 // Student Dashboard
