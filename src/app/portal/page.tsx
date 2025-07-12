@@ -1,31 +1,36 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import Image from 'next/image';
+import { useState } from "react";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 export default function Portal() {
   const [isSignUp, setIsSignUp] = useState(false);
+  const router = useRouter();
 
   return (
     <div className="w-full h-screen flex justify-center">
       {/* Left side - Image */}
       <div className="hidden md:flex w-1/2 h-full relative">
-        <Image
-          src="/about.png"
-          alt="heroleft"
-          fill
-          className="object-cover"
-        />
+        <Image src="/about.png" alt="heroleft" fill className="object-cover" />
       </div>
 
       {/* Right side - Form area */}
       <div className="w-1/2 h-full flex items-center justify-center bg-white">
         <div className="text-center w-80">
           <h3 className="text-2xl font-bold mb-6">
-            {isSignUp ? 'Sign Up' : 'Sign In'}
+            {isSignUp ? "Sign Up" : "Sign In"}
           </h3>
 
-          <form className="space-y-4">
+          <form
+            className="space-y-4"
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (!isSignUp) {
+                router.push("/dashboard/student");
+              }
+            }}
+          >
             {isSignUp && (
               <>
                 <input
@@ -61,7 +66,7 @@ export default function Portal() {
             )}
 
             <button className="bg-[#6B0F10] text-white px-4 py-2 rounded w-full hover:bg-[#951A1B] hover:cursor-pointer transition">
-              {isSignUp ? 'Create Account' : 'Login'}
+              {isSignUp ? "Create Account" : "Login"}
             </button>
           </form>
 
@@ -69,7 +74,7 @@ export default function Portal() {
           <p className="mt-6 text-sm text-gray-600">
             {isSignUp ? (
               <>
-                Already have an account?{' '}
+                Already have an account?{" "}
                 <button
                   onClick={() => setIsSignUp(false)}
                   className="text-blue-600 hover:underline"
@@ -79,7 +84,7 @@ export default function Portal() {
               </>
             ) : (
               <>
-                Don’t have an account?{' '}
+                Don’t have an account?{" "}
                 <button
                   onClick={() => setIsSignUp(true)}
                   className="text-blue-600 hover:underline"
