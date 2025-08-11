@@ -4,7 +4,6 @@ import type React from "react";
 import { useState, useCallback } from "react";
 import { CalendarIcon } from "lucide-react";
 
-// UI shims for demo: Replace with your own UI library if needed
 const Card = ({
   children,
   className = "",
@@ -112,16 +111,16 @@ interface PersonalDetailsFormProps {
 
 export function PersonalDetailsForm({ onNext }: PersonalDetailsFormProps) {
   const [formData, setFormData] = useState({
-    firstName: "John",
-    lastName: "Doe",
-    email: "john.doe@email.com",
-    phone: "+1234567890",
-    nationality: "US",
-    address: "123 Main St, City, State 12345",
-    emergencyContact: "Jane Doe - +1234567891",
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    nationality: "",
+    address: "",
+    emergencyContact: "",
   });
 
-  const [dateOfBirth, setDateOfBirth] = useState<string>("1995-06-15");
+  const [dateOfBirth, setDateOfBirth] = useState<string>("");
 
   const handleInputChange = useCallback((field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -156,6 +155,7 @@ export function PersonalDetailsForm({ onNext }: PersonalDetailsFormProps) {
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                   handleInputChange("firstName", e.target.value)
                 }
+                placeholder="Enter your first name"
                 required
               />
             </div>
@@ -167,6 +167,7 @@ export function PersonalDetailsForm({ onNext }: PersonalDetailsFormProps) {
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                   handleInputChange("lastName", e.target.value)
                 }
+                placeholder="Enter your last name"
                 required
               />
             </div>
@@ -182,6 +183,7 @@ export function PersonalDetailsForm({ onNext }: PersonalDetailsFormProps) {
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                   handleInputChange("email", e.target.value)
                 }
+                placeholder="Enter your full email address"
                 required
               />
             </div>
@@ -193,6 +195,7 @@ export function PersonalDetailsForm({ onNext }: PersonalDetailsFormProps) {
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                   handleInputChange("phone", e.target.value)
                 }
+                placeholder="Enter your full phone number"
                 required
               />
             </div>

@@ -11,7 +11,7 @@ export default function ClientLayout({
 }) {
   const pathname = usePathname();
   const isDashboard = pathname?.startsWith("/dashboard/");
-  console.log("Current pathname:", pathname, "isDashboard:", isDashboard); // Debug log
+  console.log("Current pathname:", pathname, "isDashboard:", isDashboard);
 
   return (
     <>

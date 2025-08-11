@@ -106,7 +106,10 @@ export default function StudentSidebar() {
       </nav>
 
       <div className={`p-4 mb-2 ${collapsed ? "flex justify-center" : ""}`}>
-        <button className="flex items-center w-full p-2 rounded-lg hover:bg-gray-100 text-gray-700 font-medium justify-center">
+        <button
+          className="flex items-center w-full p-2 rounded-lg hover:bg-gray-100 text-gray-700 font-medium justify-center"
+          onClick={() => router.push("/")}
+        >
           <LogOut className="w-5 h-5 mr-3" />
           {!collapsed && <span>Log Out</span>}
         </button>

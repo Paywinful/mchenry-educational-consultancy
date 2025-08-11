@@ -171,13 +171,13 @@ export function InstitutionPreferencesForm({
   onNext,
   onPrev,
 }: InstitutionPreferencesFormProps) {
-  const [selectedInstitutions, setSelectedInstitutions] = useState<string[]>([
-    "1",
-    "2",
-  ]);
-  const [preferredProgram, setPreferredProgram] = useState("Computer Science");
-  const [degreeLevel, setDegreeLevel] = useState("master");
-  const [startTerm, setStartTerm] = useState("fall-2024");
+  const [institutionType, setInstitutionType] = useState("tertiary");
+  const [selectedInstitutions, setSelectedInstitutions] = useState<string[]>(
+    []
+  );
+  const [preferredProgram, setPreferredProgram] = useState("");
+  const [degreeLevel, setDegreeLevel] = useState("");
+  const [startTerm, setStartTerm] = useState("");
   const [additionalInfo, setAdditionalInfo] = useState("");
 
   const toggleInstitution = useCallback((institutionId: string) => {
@@ -210,6 +210,42 @@ export function InstitutionPreferencesForm({
     ]
   );
 
+  // Example SHS and Tertiary institutions
+  const shsInstitutions = [
+    {
+      id: "shs1",
+      name: "Wesley Girls' High School",
+      location: "Cape Coast",
+      ranking: 1,
+      programs: ["Science", "Business", "Arts"],
+    },
+    {
+      id: "shs2",
+      name: "Presbyterian Boys' Secondary School",
+      location: "Accra",
+      ranking: 2,
+      programs: ["Science", "Business", "Visual Arts"],
+    },
+    {
+      id: "shs3",
+      name: "Achimota School",
+      location: "Accra",
+      ranking: 3,
+      programs: ["Science", "Business", "General Arts"],
+    },
+    {
+      id: "shs4",
+      name: "St. Augustine's College",
+      location: "Cape Coast",
+      ranking: 4,
+      programs: ["Science", "Business", "Arts"],
+    },
+  ];
+  const tertiaryInstitutions = institutions;
+
+  const displayedInstitutions =
+    institutionType === "shs" ? shsInstitutions : tertiaryInstitutions;
+
   return (
     <Card>
       <CardHeader>
@@ -220,6 +256,47 @@ export function InstitutionPreferencesForm({
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-8">
+          {/* Institution Type Selection */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold">Institution Type</h3>
+            <div className="flex gap-4">
+              <Button
+                type="button"
+                className={`!px-6 !py-2 !rounded-full border !font-semibold !shadow-none ${
+                  institutionType === "shs"
+                    ? "bg-[#6B0F10] text-white"
+                    : "bg-gray-100 text-[#6B0F10]"
+                }`}
+                onClick={() => {
+                  setInstitutionType("shs");
+                  setSelectedInstitutions([]);
+                  setPreferredProgram("");
+                  setDegreeLevel("");
+                  setStartTerm("");
+                }}
+              >
+                SHS (Senior High School)
+              </Button>
+              <Button
+                type="button"
+                className={`!px-6 !py-2 !rounded-full border !font-semibold !shadow-none ${
+                  institutionType === "tertiary"
+                    ? "bg-[#6B0F10] text-white"
+                    : "bg-gray-100 text-[#6B0F10]"
+                }`}
+                onClick={() => {
+                  setInstitutionType("tertiary");
+                  setSelectedInstitutions([]);
+                  setPreferredProgram("");
+                  setDegreeLevel("");
+                  setStartTerm("");
+                }}
+              >
+                Tertiary
+              </Button>
+            </div>
+          </div>
+
           {/* Program Details */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">Program Details</h3>
@@ -231,36 +308,63 @@ export function InstitutionPreferencesForm({
                   onValueChange={setPreferredProgram}
                 >
                   <SelectValue placeholder="Select program" />
-                  <SelectItem value="Computer Science">
-                    Computer Science
-                  </SelectItem>
-                  <SelectItem value="Business">
-                    Business Administration
-                  </SelectItem>
-                  <SelectItem value="Engineering">Engineering</SelectItem>
-                  <SelectItem value="Medicine">Medicine</SelectItem>
-                  <SelectItem value="Law">Law</SelectItem>
-                  <SelectItem value="Economics">Economics</SelectItem>
-                  <SelectItem value="Other">Other</SelectItem>
+                  {institutionType === "shs" ? (
+                    <>
+                      <SelectItem value="Science">Science</SelectItem>
+                      <SelectItem value="Business">Business</SelectItem>
+                      <SelectItem value="Arts">Arts</SelectItem>
+                      <SelectItem value="Visual Arts">Visual Arts</SelectItem>
+                      <SelectItem value="General Arts">General Arts</SelectItem>
+                    </>
+                  ) : (
+                    <>
+                      <SelectItem value="Computer Science">
+                        Computer Science
+                      </SelectItem>
+                      <SelectItem value="Business">
+                        Business Administration
+                      </SelectItem>
+                      <SelectItem value="Engineering">Engineering</SelectItem>
+                      <SelectItem value="Medicine">Medicine</SelectItem>
+                      <SelectItem value="Law">Law</SelectItem>
+                      <SelectItem value="Economics">Economics</SelectItem>
+                      <SelectItem value="Other">Other</SelectItem>
+                    </>
+                  )}
                 </Select>
               </div>
               <div className="space-y-2">
                 <Label>Degree Level *</Label>
                 <Select value={degreeLevel} onValueChange={setDegreeLevel}>
                   <SelectValue placeholder="Select degree level" />
-                  <SelectItem value="bachelor">Bachelor's</SelectItem>
-                  <SelectItem value="master">Master's</SelectItem>
-                  <SelectItem value="doctorate">Doctorate</SelectItem>
+                  {institutionType === "shs" ? (
+                    <SelectItem value="shs">SHS Certificate</SelectItem>
+                  ) : (
+                    <>
+                      <SelectItem value="bachelor">Bachelor's</SelectItem>
+                      <SelectItem value="master">Master's</SelectItem>
+                      <SelectItem value="doctorate">Doctorate</SelectItem>
+                    </>
+                  )}
                 </Select>
               </div>
               <div className="space-y-2">
                 <Label>Preferred Start Term *</Label>
                 <Select value={startTerm} onValueChange={setStartTerm}>
                   <SelectValue placeholder="Select start term" />
-                  <SelectItem value="fall-2024">Fall 2024</SelectItem>
-                  <SelectItem value="spring-2025">Spring 2025</SelectItem>
-                  <SelectItem value="summer-2025">Summer 2025</SelectItem>
-                  <SelectItem value="fall-2025">Fall 2025</SelectItem>
+                  {institutionType === "shs" ? (
+                    <>
+                      <SelectItem value="2025">2025</SelectItem>
+                      <SelectItem value="2026">2026</SelectItem>
+                    </>
+                  ) : (
+                    <>
+                      <SelectItem value="fall-2024">Fall 2024</SelectItem>
+                      <SelectItem value="spring-2025">Spring 2025</SelectItem>
+                      <SelectItem value="summer-2025">Summer 2025</SelectItem>
+                      <SelectItem value="fall-2025">Fall 2025</SelectItem>
+                    </>
+                  )}
                 </Select>
               </div>
             </div>
@@ -279,7 +383,7 @@ export function InstitutionPreferencesForm({
             </p>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {institutions.map((institution) => (
+              {displayedInstitutions.map((institution) => (
                 <Card
                   key={institution.id}
                   className={`cursor-pointer transition-colors ${
@@ -309,13 +413,6 @@ export function InstitutionPreferencesForm({
                       <div className="flex items-center gap-1 text-sm">
                         <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
                         #{institution.ranking}
-                      </div>
-                    </div>
-
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center gap-1 text-sm">
-                        <DollarSign className="h-3 w-3" />
-                        {institution.tuition}/year
                       </div>
                     </div>
 

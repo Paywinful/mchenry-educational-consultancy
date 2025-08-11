@@ -124,22 +124,22 @@ export function AcademicBackgroundForm({
 }: AcademicBackgroundFormProps) {
   const [educationHistory, setEducationHistory] = useState<Education[]>([
     {
-      id: "1",
-      institution: "State University",
-      degree: "bachelor",
-      fieldOfStudy: "Computer Science",
-      startYear: "2018",
-      endYear: "2022",
-      gpa: "3.8",
+      id: "",
+      institution: "",
+      degree: "",
+      fieldOfStudy: "",
+      startYear: "",
+      endYear: "",
+      gpa: "",
     },
   ]);
 
   const [testScores, setTestScores] = useState({
-    sat: "1450",
+    sat: "",
     act: "",
     gre: "",
     gmat: "",
-    toefl: "105",
+    toefl: "",
     ielts: "",
   });
 

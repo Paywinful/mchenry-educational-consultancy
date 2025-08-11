@@ -14,7 +14,6 @@ import { AcademicBackgroundForm } from "@/components/student/forms/academic-back
 import { InstitutionPreferencesForm } from "@/components/student/forms/institution-preferences-form";
 import { DocumentUploadForm } from "@/components/student/forms/document-upload-form";
 
-// UI shims for Card, Badge, Progress
 const Card = ({
   children,
   className = "",

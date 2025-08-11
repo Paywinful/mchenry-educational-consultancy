@@ -10,7 +10,6 @@ import {
   Trash2,
 } from "lucide-react";
 
-// UI shims for demo: Replace with your own UI library if needed
 const Card = ({
   children,
   className = "",
@@ -117,7 +116,7 @@ export function DocumentUploadForm({ onPrev }: DocumentUploadFormProps) {
       id: "1",
       name: "Passport Copy",
       type: "passport",
-      status: "uploaded",
+      status: "required",
       uploadDate: "2024-01-15",
       size: "2.3 MB",
     },
@@ -131,7 +130,7 @@ export function DocumentUploadForm({ onPrev }: DocumentUploadFormProps) {
       id: "3",
       name: "Personal Statement",
       type: "statement",
-      status: "verified",
+      status: "required",
       uploadDate: "2024-01-10",
       size: "1.8 MB",
     },
@@ -139,7 +138,7 @@ export function DocumentUploadForm({ onPrev }: DocumentUploadFormProps) {
       id: "4",
       name: "Letters of Recommendation",
       type: "recommendation",
-      status: "uploaded",
+      status: "required",
       uploadDate: "2024-01-12",
       size: "3.1 MB",
     },

@@ -1,3 +1,4 @@
+"use client";
 import Image from "next/image";
 
 export default function StudentDashboard() {
@@ -21,7 +22,12 @@ export default function StudentDashboard() {
                 <button className="border-2 border-[#6B0F10] text-[#6B0F10] bg-white px-6 py-3 rounded-lg font-semibold hover:bg-[#6B0F10] hover:text-white transition text-base">
                   View application requirements
                 </button>
-                <button className="bg-[#6B0F10] text-white px-8 py-3 rounded-lg font-semibold hover:bg-[#951A1B] transition text-base ">
+                <button
+                  className="bg-[#6B0F10] text-white px-8 py-3 rounded-lg font-semibold hover:bg-[#951A1B] transition text-base "
+                  onClick={() =>
+                    (window.location.href = "/dashboard/student/application")
+                  }
+                >
                   Apply Now
                 </button>
               </div>
