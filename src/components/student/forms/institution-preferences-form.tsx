@@ -4,7 +4,6 @@ import type React from "react";
 import { useState, useCallback } from "react";
 import { Star, MapPin, DollarSign } from "lucide-react";
 
-// UI shims for demo: Replace with your own UI library if needed
 const Card = ({
   children,
   className = "",
@@ -265,7 +264,7 @@ export function InstitutionPreferencesForm({
                 className={`!px-6 !py-2 !rounded-full border !font-semibold !shadow-none ${
                   institutionType === "shs"
                     ? "bg-[#6B0F10] text-white"
-                    : "bg-gray-100 text-[#6B0F10]"
+                    : "bg-red-400 text-[#6B0F10]"
                 }`}
                 onClick={() => {
                   setInstitutionType("shs");
@@ -282,7 +281,7 @@ export function InstitutionPreferencesForm({
                 className={`!px-6 !py-2 !rounded-full border !font-semibold !shadow-none ${
                   institutionType === "tertiary"
                     ? "bg-[#6B0F10] text-white"
-                    : "bg-gray-100 text-[#6B0F10]"
+                    : "bg-red-400 text-[#6B0F10]"
                 }`}
                 onClick={() => {
                   setInstitutionType("tertiary");

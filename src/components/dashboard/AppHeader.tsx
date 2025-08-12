@@ -1,8 +1,13 @@
 import React from "react";
-import { Bell } from "lucide-react";
+import { Bell, ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
 
-export default function AppHeader() {
+interface AppHeaderProps {
+  collapsed: boolean;
+  setCollapsed: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const AppHeader: React.FC<AppHeaderProps> = ({ collapsed, setCollapsed }) => {
   const userName = "Cudjoe";
   const today = new Date();
   const dateString = today.toLocaleDateString("en-US", {
@@ -15,11 +20,24 @@ export default function AppHeader() {
 
   return (
     <header className="flex items-center justify-between w-full px-8 py-4 bg-white shadow-md min-h-[70px]">
-      <div>
-        <h2 className="text-2xl font-bold text-[#6B0F10]">
-          Welcome {userName}
-        </h2>
-        <p className="text-xs text-gray-500 mt-1">Today is {dateString}</p>
+      <div className="flex items-center">
+        <button
+          className="mr-4 p-2 rounded hover:bg-gray-100 transition-all duration-300"
+          onClick={() => setCollapsed((prev) => !prev)}
+          aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+        >
+          {collapsed ? (
+            <ChevronRight className="w-5 h-5 text-[#6B0F10]" />
+          ) : (
+            <ChevronLeft className="w-5 h-5 text-[#6B0F10]" />
+          )}
+        </button>
+        <div>
+          <h2 className="text-2xl font-bold text-[#6B0F10]">
+            Welcome {userName}
+          </h2>
+          <p className="text-xs text-gray-500 mt-1">Today is {dateString}</p>
+        </div>
       </div>
       <div className="flex items-center gap-6">
         <div className="relative">
@@ -44,4 +62,6 @@ export default function AppHeader() {
       </div>
     </header>
   );
-}
+};
+
+export default AppHeader;

@@ -9,25 +9,10 @@ export default function LoadingScreen() {
   const router = useRouter();
 
   useEffect(() => {
-    const handleStart = () => {
-      setVisible(true);
-      setActive(true);
-    };
-    const handleComplete = () => {
-      setActive(false);
-      setTimeout(() => setVisible(false), 300);
-    };
-    router.events?.on("routeChangeStart", handleStart);
-    router.events?.on("routeChangeComplete", handleComplete);
-    router.events?.on("routeChangeError", handleComplete);
-    setTimeout(() => setActive(false), 1200); // Initial load
+    setActive(true);
+    setTimeout(() => setActive(false), 1200);
     setTimeout(() => setVisible(false), 1500);
-    return () => {
-      router.events?.off("routeChangeStart", handleStart);
-      router.events?.off("routeChangeComplete", handleComplete);
-      router.events?.off("routeChangeError", handleComplete);
-    };
-  }, [router]);
+  }, []);
 
   if (!visible) return null;
 

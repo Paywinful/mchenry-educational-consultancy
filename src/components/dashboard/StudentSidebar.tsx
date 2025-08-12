@@ -35,10 +35,13 @@ const navLinks = [
   },
 ];
 
-export default function StudentSidebar() {
+interface StudentSidebarProps {
+  collapsed: boolean;
+}
+
+const StudentSidebar: React.FC<StudentSidebarProps> = ({ collapsed }) => {
   const pathname = usePathname();
   const router = useRouter();
-  const [collapsed, setCollapsed] = useState(false);
 
   return (
     <aside
@@ -46,33 +49,19 @@ export default function StudentSidebar() {
         collapsed ? "w-20" : "w-64"
       } h-full bg-white flex flex-col justify-between shadow-md transition-all duration-300`}
     >
-      {/* Toggle Button */}
-      <div className="flex items-center justify-between p-6">
-        <div className="flex items-center">
-          <Image
-            src="/logo.jpg"
-            alt="Logo"
-            width={48}
-            height={48}
-            className={`rounded-full border border-gray-200 ${
-              collapsed ? "mx-auto" : ""
-            }`}
-          />
-          {!collapsed && (
-            <span className="ml-3 font-bold text-xl text-[#6B0F10] tracking-wide"></span>
-          )}
-        </div>
-        <button
-          className="ml-2 p-2 rounded hover:bg-gray-100"
-          onClick={() => setCollapsed((prev) => !prev)}
-          aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-        >
-          {collapsed ? (
-            <ChevronRight className="w-5 h-5 text-[#6B0F10]" />
-          ) : (
-            <ChevronLeft className="w-5 h-5 text-[#6B0F10]" />
-          )}
-        </button>
+      <div className="flex items-center p-6">
+        <Image
+          src="/logo.jpg"
+          alt="Logo"
+          width={48}
+          height={48}
+          className={`rounded-full border border-gray-200 ${
+            collapsed ? "mx-auto" : ""
+          }`}
+        />
+        {!collapsed && (
+          <span className="ml-3 font-bold text-xl text-[#6B0F10] tracking-wide"></span>
+        )}
       </div>
 
       <nav className="flex-1 px-4">
@@ -116,4 +105,6 @@ export default function StudentSidebar() {
       </div>
     </aside>
   );
-}
+};
+
+export default StudentSidebar;

@@ -213,7 +213,6 @@ export function PersonalDetailsForm({ onNext }: PersonalDetailsFormProps) {
                   }
                   required
                 />
-                <CalendarIcon className="h-5 w-5 text-gray-400" />
               </div>
             </div>
             <div className="space-y-2">
