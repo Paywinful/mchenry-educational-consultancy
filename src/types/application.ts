@@ -1,11 +1,11 @@
 export type ApplicationStatus =
-  | 'draft'
-  | 'submitted'
-  | 'under_review'
-  | 'accepted'
-  | 'accommodation_assigned'
-  | 'rejected'
-  | 'completed';
+  | "draft"
+  | "submitted"
+  | "under_review"
+  | "accepted"
+  | "accommodation_assigned"
+  | "rejected"
+  | "completed";
 
 export interface Application {
   id: string;
