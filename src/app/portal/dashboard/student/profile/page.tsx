@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Image from "next/image";
 
 export default function SettingsPage() {
   const [isEditing, setIsEditing] = useState(true);
@@ -153,11 +154,12 @@ export default function SettingsPage() {
       ) : (
         <div className="bg-white p-6 rounded-lg shadow border space-y-4">
           <div className="flex items-center gap-4">
-            <img
-              src={photo || "/default-avatar.png"}
-              alt="Profile"
-              className="w-24 h-24 object-cover rounded-full border"
-            />
+            <Image
+                src={photo || "/default-avatar.png"}
+                alt="Profile"
+                fill
+                className="object-cover rounded-full border"
+              />
             <div>
               <h2 className="text-xl font-semibold">{formData.fullName}</h2>
               <p className="text-gray-500">{formData.email}</p>

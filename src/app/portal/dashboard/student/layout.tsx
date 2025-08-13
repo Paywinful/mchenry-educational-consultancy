@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { Menu, X } from "lucide-react";
+import Image from "next/image"; // ✅ import Next.js Image
 import AppHeader from "@/components/dashboard/AppHeader";
 import { usePathname, useRouter } from "next/navigation";
 
@@ -32,7 +33,14 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               setSidebarOpen(false);
             }}
           >
-            <img src="/logo.jpg" alt="Logo" className="h-12 w-12 rounded-full border" />
+            <Image
+              src="/logo.jpg"
+              alt="Logo"
+              width={48}
+              height={48}
+              className="rounded-full border"
+              priority
+            />
             <span className="ml-3 font-bold text-xl text-[#6B0F10] tracking-wide">
               McHenry
             </span>

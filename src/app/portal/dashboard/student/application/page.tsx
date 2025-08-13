@@ -3,11 +3,51 @@ import React, { useState } from "react";
 
 type ApplicationType = "university" | "highschool";
 
+type UniversityFormData = {
+  university?: string;
+  fullName?: string;
+  dob?: string;
+  gender?: string;
+  nationality?: string;
+  idNumber?: string;
+  email?: string;
+  phone?: string;
+  address?: string;
+  lastSchool?: string;
+  schoolCountry?: string;
+  yearAttended?: string;
+  qualification?: string;
+  gradYear?: string;
+  grades?: string;
+  firstChoice?: string;
+  secondChoice?: string;
+  thirdChoice?: string;
+  guardianName?: string;
+  guardianContact?: string;
+  medical?: string;
+  declaration?: boolean;
+};
+
+type HighSchoolFormData = {
+  fullName?: string;
+  dob?: string;
+  previousSchool?: string;
+  lastGrade?: string;
+  parentName?: string;
+  parentContact?: string;
+  declaration?: boolean;
+};
+
+type ApplicationFormData = UniversityFormData & HighSchoolFormData;
+
+
 interface Application {
   id: number;
   type: ApplicationType;
-  data: Record<string, any>;
+  data: ApplicationFormData;
 }
+
+
 
 export default function ApplicationPage() {
   const universityList = [
@@ -30,7 +70,7 @@ export default function ApplicationPage() {
   const [applications, setApplications] = useState<Application[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [applicationType, setApplicationType] = useState<ApplicationType | null>(null);
-  const [formData, setFormData] = useState<Record<string, any>>({});
+  const [formData, setFormData] = useState<ApplicationFormData>({});
   const [editId, setEditId] = useState<number | null>(null);
 
   const handleCreate = () => {

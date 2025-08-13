@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Image from "next/image";
 
 export default function AdminProfile() {
   const [isEditing, setIsEditing] = useState(true);
@@ -53,13 +54,21 @@ export default function AdminProfile() {
           <div>
             <label className="block mb-2 font-medium">Profile Photo</label>
             {photo && (
-              <img
-                src={photo}
-                alt="Profile"
-                className="w-24 h-24 object-cover rounded-full mb-3 border"
-              />
+              <div className="relative w-24 h-24 mb-3">
+                <Image
+                  src={photo}
+                  alt="Profile"
+                  fill
+                  className="object-cover rounded-full border"
+                />
+              </div>
             )}
-            <input type="file" accept="image/*" onChange={handlePhotoChange} />
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handlePhotoChange}
+              className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 hover:cursor-pointer"
+            />
           </div>
 
           {/* Personal Info */}
@@ -123,11 +132,14 @@ export default function AdminProfile() {
       ) : (
         <div className="bg-white p-6 rounded-lg shadow border space-y-4">
           <div className="flex items-center gap-4">
-            <img
-              src={photo || "/default-avatar.png"}
-              alt="Profile"
-              className="w-24 h-24 object-cover rounded-full border"
-            />
+            <div className="relative w-24 h-24">
+              <Image
+                src={photo || "/default-avatar.png"}
+                alt="Profile"
+                fill
+                className="object-cover rounded-full border"
+              />
+            </div>
             <div>
               <h2 className="text-xl font-semibold">{formData.fullName}</h2>
               <p className="text-gray-500">{formData.role}</p>
