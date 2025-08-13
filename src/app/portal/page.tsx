@@ -27,7 +27,7 @@ export default function Portal() {
             onSubmit={(e) => {
               e.preventDefault();
               if (!isSignUp) {
-                router.push("/dashboard/student");
+                router.push("/portal/dashboard/students");
               }
             }}
           >
