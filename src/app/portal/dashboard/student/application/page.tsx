@@ -65,7 +65,7 @@ export default function ApplicationPage() {
     "University of Health and Allied Sciences",
     "University of Energy and Natural Resources",
     // Add more as needed
-  ]; // Based on public sources listing Ghanaian universities :contentReference[oaicite:0]{index=0}
+  ]; 
 
   const [applications, setApplications] = useState<Application[]>([]);
   const [showForm, setShowForm] = useState(false);
@@ -93,14 +93,16 @@ export default function ApplicationPage() {
   };
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value, type, checked } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }));
-  };
+  e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+) => {
+  const { name, value, type } = e.target;
+  const checked = type === "checkbox" && "checked" in e.target ? e.target.checked : undefined;
+
+  setFormData((prev) => ({
+    ...prev,
+    [name]: type === "checkbox" ? checked : value,
+  }));
+};
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
