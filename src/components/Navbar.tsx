@@ -41,7 +41,7 @@ export default function Navbar() {
             <Link href="/about" className="py-2 hover:underline" onClick={() => setMenuOpen(false)}>About</Link>
             <Link href="/faq" className="py-2 hover:underline" onClick={() => setMenuOpen(false)}>FAQ</Link>
             <Link href="/contact" className="py-2 hover:underline" onClick={() => setMenuOpen(false)}>Contact</Link>
-            <Link href="/contact" className="mt-4 p-2 px-7 bg-black text-white rounded-3xl" onClick={() => setMenuOpen(false)}>Find a School</Link>
+            <Link href="/portal" className="mt-4 p-2 px-7 bg-black text-white rounded-3xl" onClick={() => setMenuOpen(false)}>Find a School</Link>
           </div>
         )}
       </nav>
