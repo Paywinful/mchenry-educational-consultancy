@@ -49,14 +49,14 @@ export default function About() {
               F
             </span>
             ounded with a vision to bridge the gap between international
-            students and Ghana's prestigious educational institutions, McHenry
+            students and Ghana&apos;s prestigious educational institutions, McHenry
             Educational Consultancy was born from the understanding that quality
             education should be accessible to all, regardless of geographical
             boundaries.
             <br />
             <br />
             Our journey began when we recognized the untapped potential of
-            Ghana's higher education sector and the growing demand from
+            Ghana&apos;s higher education sector and the growing demand from
             international students seeking authentic, affordable, and quality
             education in a culturally rich environment.
           </p>

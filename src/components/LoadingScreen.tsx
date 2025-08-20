@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 export default function LoadingScreen() {
   const [visible, setVisible] = useState(true);
   const [active, setActive] = useState(false);
-  const router = useRouter();
+  // const router = useRouter();
 
   useEffect(() => {
     setActive(true);
