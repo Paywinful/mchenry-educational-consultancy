@@ -25,7 +25,7 @@ export async function POST(req: Request, ctx: Ctx) {
 
     const { items = [] }: { items: EducationHistoryInput[] } = await req.json();
 
-    const rows = items.map(({ id: _drop, ...rest }) => ({
+    const rows = items.map(({ id: _, ...rest }) => ({
         ...rest,
         application_id: app.id,
     }));
