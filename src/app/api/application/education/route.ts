@@ -1,4 +1,6 @@
-﻿import { NextResponse } from 'next/server';
+﻿/* eslint-disable @typescript-eslint/no-explicit-any */
+
+import { NextResponse } from 'next/server';
 import { supabaseRoute } from '@/lib/supabase/server';
 
 export async function POST(req: Request) {

@@ -1,4 +1,4 @@
-// src/app/api/payments/list/route.ts
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export const runtime = 'nodejs';           // ensure Node runtime
 export const dynamic = 'force-dynamic';    // avoid any static caching
 

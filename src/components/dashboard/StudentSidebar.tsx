@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 "use client";
 
 import { usePathname, useRouter } from "next/navigation";
@@ -61,7 +63,7 @@ const StudentSidebar: React.FC<StudentSidebarProps> = ({ collapsed }) => {
                 <button
                   onClick={() => router.push(link.href)}
                   className={`flex items-center w-full hover:cursor-pointer text-left p-2 rounded-lg font-semibold transition-colors duration-150 ${
-                    isActive ? "bg-[#6B0F10] text-white" : "hover:bg-gray-100 text-gray-700"
+                    isActive ? "bg-[#F5EFDB] text-black" : "hover:bg-gray-100 text-gray-700"
                   } ${collapsed ? "justify-center" : ""}`}
                 >
                   {link.icon}
