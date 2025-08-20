@@ -37,10 +37,17 @@ export async function POST(
 
   const { items = [] }: PostBody = await req.json();
 
-  const rows = items.map(({ id, ...rest }) => ({
-    ...rest,
-    application_id: app.id,
-  }));
+  // replace the rows mapping with this:
+const rows = items.map((e) => ({
+  institution: e.institution,
+  degree: e.degree,
+  field_of_study: e.field_of_study,
+  start_year: e.start_year,
+  end_year: e.end_year,
+  gpa: e.gpa,
+  application_id: app.id,
+}));
+
 
   const { error } = await supabase.from("education_history").insert(rows);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
