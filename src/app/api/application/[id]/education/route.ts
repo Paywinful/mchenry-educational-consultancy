@@ -25,7 +25,8 @@ export async function POST(req: Request, ctx: Ctx) {
 
     const { items = [] }: { items: EducationHistoryInput[] } = await req.json();
 
-    const rows = items.map(({ id: _, ...rest }) => ({
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const rows = items.map(({ id: _drop, ...rest }) => ({
         ...rest,
         application_id: app.id,
     }));
