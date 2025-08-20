@@ -1,62 +1,95 @@
-import { NextResponse } from 'next/server';
-import { supabaseRoute } from '@/lib/supabase/server';
-
-type Ctx = { params: { id: string } };
+import { NextResponse, type NextRequest } from "next/server";
+import { supabaseRoute } from "@/lib/supabase/server";
 
 interface EducationHistoryInput {
-    id?: string; 
-    institution: string;
-    degree?: string;
-    field_of_study?: string;
-    start_year?: string;
-    end_year?: string;
-    gpa?: string;
+  id?: string;
+  institution: string;
+  degree?: string;
+  field_of_study?: string;
+  start_year?: string;
+  end_year?: string;
+  gpa?: string;
 }
 
+type PostBody = { items?: EducationHistoryInput[] };
+type PutBody = { items?: (EducationHistoryInput & { id: string })[] };
+type DeleteBody = { ids?: string[] };
 
-export async function POST(req: Request, ctx: Ctx) {
-    const supabase = supabaseRoute();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+export async function POST(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  const supabase = supabaseRoute();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    // ensure the app belongs to the user
-    const { data: app } = await supabase.from('applications').select('id,user_id').eq('id', ctx.params.id).eq('user_id', user.id).maybeSingle();
-    if (!app) return NextResponse.json({ error: 'Not found' }, { status: 404 });
+  // ensure the app belongs to the user
+  const { data: app } = await supabase
+    .from("applications")
+    .select("id,user_id")
+    .eq("id", params.id)
+    .eq("user_id", user.id)
+    .maybeSingle();
 
-    const { items = [] }: { items: EducationHistoryInput[] } = await req.json();
+  if (!app) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const rows = items.map(({ id: _drop, ...rest }) => ({
-        ...rest,
-        application_id: app.id,
-    }));
+  const { items = [] }: PostBody = await req.json();
 
+  const rows = items.map(({ id, ...rest }) => ({
+    ...rest,
+    application_id: app.id,
+  }));
 
-    const { error } = await supabase.from('education_history').insert(rows);
-    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-    return NextResponse.json({ ok: true });
+  const { error } = await supabase.from("education_history").insert(rows);
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+
+  return NextResponse.json({ ok: true });
 }
 
-export async function PUT(req: Request, ctx: Ctx) {
-    const supabase = supabaseRoute();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+export async function PUT(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  const supabase = supabaseRoute();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    const { items = [] } = await req.json();
-    // update only rows for this app
-    for (const u of items) {
-        const { id, ...rest } = u;
-        await supabase.from('education_history').update(rest).eq('id', id).eq('application_id', ctx.params.id);
-    }
-    return NextResponse.json({ ok: true });
+  const { items = [] }: PutBody = await req.json();
+
+  // update only rows for this app
+  for (const u of items) {
+    const { id, ...rest } = u;
+    await supabase
+      .from("education_history")
+      .update(rest)
+      .eq("id", id)
+      .eq("application_id", params.id);
+  }
+
+  return NextResponse.json({ ok: true });
 }
 
-export async function DELETE(req: Request, ctx: Ctx) {
-    const supabase = supabaseRoute();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  const supabase = supabaseRoute();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    const { ids = [] } = await req.json();
-    await supabase.from('education_history').delete().in('id', ids).eq('application_id', ctx.params.id);
-    return NextResponse.json({ ok: true });
+  const { ids = [] }: DeleteBody = await req.json();
+
+  await supabase
+    .from("education_history")
+    .delete()
+    .in("id", ids)
+    .eq("application_id", params.id);
+
+  return NextResponse.json({ ok: true });
 }
