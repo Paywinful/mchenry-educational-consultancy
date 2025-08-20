@@ -16,7 +16,7 @@ export async function POST(req: Request) {
 
   if (evt.event === 'charge.success') {
     const meta = evt.data.metadata || {};
-    aconst payId = meta.payment_id as string | undefined;
+    const payId = meta.payment_id as string | undefined;
     const paidAt = evt.data.paid_at ? new Date(evt.data.paid_at) : new Date();
     if (payId) {
       await supabase
