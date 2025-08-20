@@ -37,11 +37,10 @@ export async function POST(
 
   const { items = [] }: PostBody = await req.json();
 
-  
-const rows = items.map((rest) => ({
-  ...rest,
-  application_id: app.id,
-}));
+  const rows = items.map(({ id, ...rest }) => ({
+    ...rest,
+    application_id: app.id,
+  }));
 
   const { error } = await supabase.from("education_history").insert(rows);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
