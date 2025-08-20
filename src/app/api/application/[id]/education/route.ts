@@ -37,8 +37,8 @@ export async function POST(
 
   const { items = [] }: PostBody = await req.json();
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const rows = items.map(({ id, ...rest }) => ({
+  
+  const rows = items.map(({ id:_, ...rest }) => ({
     ...rest,
     application_id: app.id,
   }));
