@@ -2,12 +2,11 @@
 
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import {
   Bell,
   AlertCircle,
-  CheckCircle,
   Clock,
   CreditCard,
   Upload,
@@ -45,7 +44,7 @@ export default function NotificationsPage() {
   const [documents, setDocuments] = useState<DocumentRow[]>([]);
   const [error, setError] = useState<string | null>(null);
 
-  const refresh = async () => {
+  const refresh = useCallback(async () => {
     setError(null);
     setLoading(true);
     try {
@@ -69,7 +68,7 @@ export default function NotificationsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [supabase]); // <-- make it stable based on supabase
 
   useEffect(() => {
     let mounted = true;
@@ -77,10 +76,8 @@ export default function NotificationsPage() {
       if (!mounted) return;
       await refresh();
     })();
-    return () => {
-      mounted = false;
-    };
-  }, []);
+    return () => { mounted = false; };
+  }, [refresh]);
 
   const totalCount = useMemo(
     () => (payments?.length || 0) + (documents?.length || 0),

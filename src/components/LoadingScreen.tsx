@@ -3,12 +3,10 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 
 export default function LoadingScreen() {
   const [visible, setVisible] = useState(true);
   const [active, setActive] = useState(false);
-  // const router = useRouter();
 
   useEffect(() => {
     setActive(true);

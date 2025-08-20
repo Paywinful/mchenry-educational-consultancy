@@ -123,7 +123,7 @@ export default function ApplicationPage() {
   useEffect(() => { if (selectedId) loadDetails(selectedId); }, [selectedId, loadDetails]);
 
   const completedSteps = steps.filter((s) => s.completed).length;
-  const progressPct = useMemo(() => (completedSteps / steps.length) * 100, [completedSteps]);
+  const progressPct = useMemo(() => (completedSteps / steps.length) * 100, [completedSteps, steps.length]);
 
   const completeStep = (id: number) =>
     setSteps((prev) => prev.map((s) => (s.id === id ? { ...s, completed: true } : s)));
