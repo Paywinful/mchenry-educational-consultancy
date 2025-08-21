@@ -1,4 +1,5 @@
-﻿// app/api/paystack/webhook/route.ts
+﻿/* eslint-disable @typescript-eslint/no-explicit-any */
+// app/api/paystack/webhook/route.ts
 export const runtime = 'nodejs';         // needed for Node crypto
 export const dynamic = 'force-dynamic';  // avoid caching
 

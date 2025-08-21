@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextResponse } from "next/server";
 import { supabaseRoute } from "@/lib/supabase/server";
 import type { SupabaseClient } from "@supabase/supabase-js";
