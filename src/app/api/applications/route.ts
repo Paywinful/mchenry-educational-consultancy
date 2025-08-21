@@ -4,9 +4,12 @@ import { supabaseRoute } from "@/lib/supabase/server";
 const APPLICATION_FEE_GHS = 250;
 
 export async function GET() {
-  const supabase = supabaseRoute();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const supabase = await supabaseRoute(); // ✅ await
+
+  const { data: { user }, error: userErr } = await supabase.auth.getUser();
+  if (userErr || !user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
 
   const { data, error } = await supabase
     .from("applications")
@@ -19,9 +22,12 @@ export async function GET() {
 }
 
 export async function POST() {
-  const supabase = supabaseRoute();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const supabase = await supabaseRoute(); // ✅ await
+
+  const { data: { user }, error: userErr } = await supabase.auth.getUser();
+  if (userErr || !user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
 
   // 1) Create a brand-new application
   const { data: app, error: insErr } = await supabase
@@ -51,8 +57,9 @@ export async function POST() {
       status: "pending",
       due_date: today,
     });
+
     if (payErr) {
-      // Not fatal for app creation, but return info so you can log if needed
+      // Not fatal for app creation—return a warning alongside the application
       return NextResponse.json(
         { application: app, warning: `Payment row not created: ${payErr.message}` },
         { status: 201 }

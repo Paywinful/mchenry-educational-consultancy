@@ -1,10 +1,14 @@
-﻿import { NextResponse } from 'next/server';
+﻿// app/api/profile/route.ts
+import { NextResponse } from 'next/server';
 import { supabaseRoute } from '@/lib/supabase/server';
 
 export async function GET() {
-  const supabase = supabaseRoute();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  const supabase = await supabaseRoute(); // ✅ await, no args
+
+  const { data: { user }, error: userErr } = await supabase.auth.getUser();
+  if (userErr || !user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
 
   const { data, error } = await supabase
     .from('student_profiles')
@@ -17,12 +21,20 @@ export async function GET() {
 }
 
 export async function PUT(req: Request) {
-  const body = await req.json();
-  const supabase = supabaseRoute();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  const supabase = await supabaseRoute(); // ✅ await, no args
+
+  let body: any;
+  try { body = await req.json(); } catch { 
+    return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 });
+  }
+
+  const { data: { user }, error: userErr } = await supabase.auth.getUser();
+  if (userErr || !user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
 
   const payload = { ...body, user_id: user.id, updated_at: new Date().toISOString() };
+
   const { data, error } = await supabase
     .from('student_profiles')
     .upsert(payload, { onConflict: 'user_id' })

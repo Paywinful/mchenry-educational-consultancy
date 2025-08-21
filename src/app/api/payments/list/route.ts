@@ -7,9 +7,10 @@ import { supabaseRoute } from '@/lib/supabase/server';
 
 export async function GET() {
   try {
-    const supabase = supabaseRoute();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
+    const supabase = await supabaseRoute();  // ✅ await the async helper
+
+    const { data: { user }, error: userErr } = await supabase.auth.getUser();
+    if (userErr || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -17,14 +18,13 @@ export async function GET() {
       .from('payments')
       .select('*')
       .eq('user_id', user.id)
-      .order('due_date', { ascending: true });
+      .order('due_date', { ascending: true }); // optionally: .order('due_date', { ascending: true, nullsFirst: false })
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
     return NextResponse.json({ payments: data ?? [] });
   } catch (e: any) {
-    // if anything throws, still send JSON (never HTML)
     return NextResponse.json({ error: e?.message || 'Unexpected error' }, { status: 500 });
   }
 }
