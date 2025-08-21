@@ -1,147 +1,77 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { NextResponse } from "next/server";
-import { supabaseRoute } from "@/lib/supabase/server";
+// app/api/paystack/webhook/route.ts
+export const runtime = 'nodejs';         // needed for Node crypto
+export const dynamic = 'force-dynamic';  // avoid caching
 
-type Ctx = { params: { id: string } };
+import { NextResponse } from 'next/server';
+import crypto from 'crypto';
+import { createClient, type SupabaseClient } from '@supabase/supabase-js';
+// import type { Database } from '@/lib/supabase/types'; // <-- if you have types
 
-export async function POST(req: Request, { params }: Ctx) {
-  const supabase = await supabaseRoute(); // ✅ await the async helper
-
-  const {
-    data: { user },
-    error: userErr,
-  } = await supabase.auth.getUser();
-  if (userErr || !user)
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-  // ensure the app belongs to the user
-  const { data: app, error: appErr } = await supabase
-    .from("applications")
-    .select("id,user_id")
-    .eq("id", params.id)
-    .eq("user_id", user.id)
-    .maybeSingle();
-
-  if (appErr) return NextResponse.json({ error: appErr.message }, { status: 500 });
-  if (!app) return NextResponse.json({ error: "Not found" }, { status: 404 });
-
-  let body: any;
-  try {
-    body = await req.json();
-  } catch {
-    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
-  }
-
-  const items: any[] = Array.isArray(body?.items) ? body.items : [];
-  if (!items.length) return NextResponse.json({ ok: true });
-
-  // inside POST, after you parsed `items` and verified `app`
-const rows = (items as Array<{
-  institution?: string; degree?: string; field_of_study?: string;
-  start_year?: string; end_year?: string; gpa?: string; id?: string;
-}>).map((e) => ({
-  institution: e.institution ?? null,
-  degree: e.degree ?? null,
-  field_of_study: e.field_of_study ?? null,
-  start_year: e.start_year ?? null,
-  end_year: e.end_year ?? null,
-  gpa: e.gpa ?? null,
-  application_id: app.id,
-}));
-
-
-  const { error } = await supabase.from("education_history").insert(rows);
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-
-  return NextResponse.json({ ok: true });
+function timingSafeEqualHex(aHex: string, bHex: string) {
+  // Normalize lengths to avoid throw in timingSafeEqual
+  if (aHex.length !== bHex.length) return false;
+  const a = Buffer.from(aHex, 'hex');
+  const b = Buffer.from(bHex, 'hex');
+  return crypto.timingSafeEqual(a, b);
 }
 
-export async function PUT(req: Request, { params }: Ctx) {
-  const supabase = await supabaseRoute(); // ✅
-
-  const {
-    data: { user },
-    error: userErr,
-  } = await supabase.auth.getUser();
-  if (userErr || !user)
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-  // ensure the app belongs to the user (protects updates)
-  const { data: app, error: appErr } = await supabase
-    .from("applications")
-    .select("id,user_id")
-    .eq("id", params.id)
-    .eq("user_id", user.id)
-    .maybeSingle();
-
-  if (appErr) return NextResponse.json({ error: appErr.message }, { status: 500 });
-  if (!app) return NextResponse.json({ error: "Not found" }, { status: 404 });
-
-  let body: any;
-  try {
-    body = await req.json();
-  } catch {
-    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
-  }
-
-  const items: any[] = Array.isArray(body?.items) ? body.items : [];
-  if (!items.length) return NextResponse.json({ ok: true });
-
-  // Use upsert to batch update rows (each item must include its `id`)
-  const rows = items.map((u) => {
-    const { id, ...rest } = u;
-    return { id, ...rest, application_id: app.id };
-  });
-
-  const { error } = await supabase
-    .from("education_history")
-    .upsert(rows, { onConflict: "id" })
-    .eq("application_id", app.id) // extra guard
-    .select("id");
-
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-
-  return NextResponse.json({ ok: true });
+function getServiceClient(): SupabaseClient /* <Database> */ {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+  return createClient(url, serviceKey, { auth: { persistSession: false } });
 }
 
-export async function DELETE(req: Request, { params }: Ctx) {
-  const supabase = await supabaseRoute(); // ✅
-
-  const {
-    data: { user },
-    error: userErr,
-  } = await supabase.auth.getUser();
-  if (userErr || !user)
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-  // ensure the app belongs to the user (protects deletes)
-  const { data: app, error: appErr } = await supabase
-    .from("applications")
-    .select("id,user_id")
-    .eq("id", params.id)
-    .eq("user_id", user.id)
-    .maybeSingle();
-
-  if (appErr) return NextResponse.json({ error: appErr.message }, { status: 500 });
-  if (!app) return NextResponse.json({ error: "Not found" }, { status: 404 });
-
-  let body: any;
+export async function POST(req: Request) {
   try {
-    body = await req.json();
-  } catch {
-    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+    const secret = process.env.PAYSTACK_WEBHOOK_SECRET;
+    if (!secret) {
+      return NextResponse.json({ error: 'Webhook secret not set' }, { status: 500 });
+    }
+
+    // 1) Read raw body FIRST (required for signature validation)
+    const raw = await req.text();
+
+    // 2) Verify signature in constant time
+    const incoming = req.headers.get('x-paystack-signature') || '';
+    const signature = crypto.createHmac('sha512', secret).update(raw).digest('hex');
+    if (!incoming || !timingSafeEqualHex(signature, incoming)) {
+      return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
+    }
+
+    // 3) Parse event after verification
+    const evt = JSON.parse(raw);
+
+    // 4) Handle event(s)
+    if (evt?.event === 'charge.success') {
+      const meta = evt?.data?.metadata ?? {};
+      const payId: string | undefined = meta.payment_id;
+      const paidAt = evt?.data?.paid_at ? new Date(evt.data.paid_at) : new Date();
+      const method = evt?.data?.channel ?? null;
+      const receipt = evt?.data?.receipt_number ?? null;
+
+      if (payId) {
+        const supabase = getServiceClient(); // service role client (no cookies/RLS bypass)
+
+        const { error } = await supabase
+          .from('payments')
+          .update({
+            status: 'paid',
+            paid_at: paidAt.toISOString(),
+            method,
+            receipt_url: receipt,
+          })
+          .eq('id', payId);
+
+        if (error) {
+          // Return 500 to let Paystack retry if your DB was temporarily unavailable
+          return NextResponse.json({ error: error.message }, { status: 500 });
+        }
+      }
+    }
+
+    // 5) Always acknowledge
+    return NextResponse.json({ received: true }, { status: 200 });
+  } catch (e: any) {
+    return NextResponse.json({ error: e?.message || 'Unexpected error' }, { status: 500 });
   }
-
-  const ids: string[] = Array.isArray(body?.ids) ? body.ids : [];
-  if (!ids.length) return NextResponse.json({ ok: true });
-
-  const { error } = await supabase
-    .from("education_history")
-    .delete()
-    .in("id", ids)
-    .eq("application_id", app.id);
-
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-
-  return NextResponse.json({ ok: true });
 }
