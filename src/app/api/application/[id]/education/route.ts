@@ -35,10 +35,20 @@ export async function POST(req: Request, { params }: Ctx) {
   const items: any[] = Array.isArray(body?.items) ? body.items : [];
   if (!items.length) return NextResponse.json({ ok: true });
 
-  const rows = items.map((e) => {
-    const { id: _drop, ...rest } = e;
-    return { ...rest, application_id: app.id };
-  });
+  // inside POST, after you parsed `items` and verified `app`
+const rows = (items as Array<{
+  institution?: string; degree?: string; field_of_study?: string;
+  start_year?: string; end_year?: string; gpa?: string; id?: string;
+}>).map((e) => ({
+  institution: e.institution ?? null,
+  degree: e.degree ?? null,
+  field_of_study: e.field_of_study ?? null,
+  start_year: e.start_year ?? null,
+  end_year: e.end_year ?? null,
+  gpa: e.gpa ?? null,
+  application_id: app.id,
+}));
+
 
   const { error } = await supabase.from("education_history").insert(rows);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
