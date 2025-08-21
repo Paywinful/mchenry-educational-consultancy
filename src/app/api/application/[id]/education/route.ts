@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextResponse } from "next/server";
 import { supabaseRoute } from "@/lib/supabase/server";
 
@@ -15,17 +16,14 @@ type PostBody = { items?: EducationHistoryInput[] };
 type PutBody = { items?: (EducationHistoryInput & { id: string })[] };
 type DeleteBody = { ids?: string[] };
 
-function coerceId(params: { id: string | string[] }["id"]): string | null {
-  if (Array.isArray(params)) return params[0] ?? null;
-  return params ?? null;
+function coerceId(raw: string | string[] | undefined): string | null {
+  if (Array.isArray(raw)) return raw[0] ?? null;
+  return raw ?? null;
 }
 
 /** ---------- POST /api/application/[id]/education ---------- */
-export async function POST(
-  req: Request,
-  { params }: { params: { id: string | string[] } } // <-- inline type, broader to satisfy validator
-) {
-  const id = coerceId(params.id);
+export async function POST(req: Request, ctx: any) {
+  const id = coerceId(ctx?.params?.id);
   if (!id) return NextResponse.json({ error: "Missing id" }, { status: 400 });
 
   const supabase = await supabaseRoute();
@@ -59,7 +57,7 @@ export async function POST(
   const items = Array.isArray(body.items) ? body.items : [];
   if (items.length === 0) return NextResponse.json({ ok: true });
 
-  // Build rows explicitly (never bind/keep client id)
+  // Build rows explicitly (never keep client-provided id on insert)
   const rows = items.map((e) => ({
     institution: e.institution ?? null,
     degree: e.degree ?? null,
@@ -77,11 +75,8 @@ export async function POST(
 }
 
 /** ---------- PUT /api/application/[id]/education ---------- */
-export async function PUT(
-  req: Request,
-  { params }: { params: { id: string | string[] } } // <-- inline type
-) {
-  const id = coerceId(params.id);
+export async function PUT(req: Request, ctx: any) {
+  const id = coerceId(ctx?.params?.id);
   if (!id) return NextResponse.json({ error: "Missing id" }, { status: 400 });
 
   const supabase = await supabaseRoute();
@@ -94,7 +89,7 @@ export async function PUT(
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  // ensure the app belongs to the user (defense in depth)
+  // verify ownership
   const { data: app, error: appErr } = await supabase
     .from("applications")
     .select("id,user_id")
@@ -130,7 +125,7 @@ export async function PUT(
   const { error } = await supabase
     .from("education_history")
     .upsert(rows, { onConflict: "id" })
-    .eq("application_id", app.id) // extra guard
+    .eq("application_id", app.id)
     .select("id");
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
@@ -139,11 +134,8 @@ export async function PUT(
 }
 
 /** ---------- DELETE /api/application/[id]/education ---------- */
-export async function DELETE(
-  req: Request,
-  { params }: { params: { id: string | string[] } } // <-- inline type
-) {
-  const id = coerceId(params.id);
+export async function DELETE(req: Request, ctx: any) {
+  const id = coerceId(ctx?.params?.id);
   if (!id) return NextResponse.json({ error: "Missing id" }, { status: 400 });
 
   const supabase = await supabaseRoute();
@@ -156,7 +148,7 @@ export async function DELETE(
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  // ensure the app belongs to the user (defense in depth)
+  // verify ownership
   const { data: app, error: appErr } = await supabase
     .from("applications")
     .select("id,user_id")
