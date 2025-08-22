@@ -45,6 +45,7 @@ export async function POST() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+
     
     // Upsert a single row keyed by user_id (1:1 relationship)
     const { data, error } = await supabase
