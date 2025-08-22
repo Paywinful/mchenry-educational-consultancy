@@ -4,7 +4,7 @@ import { supabaseRoute } from "@/lib/supabase/server";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/lib/supabase/types"; // adjust path if different
 
-type Ctx = { params: { id: string } };
+// type Ctx = { params: { id: string } };
 
 type EnsureOk = {
   status: 200;
