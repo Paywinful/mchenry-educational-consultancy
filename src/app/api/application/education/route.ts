@@ -31,8 +31,8 @@ async function getAuthedApp() {
     .limit(1)
     .maybeSingle();
 
-  if (appErr) return { supabase, status: 500 as const, error: appErr.message as const };
-  if (!app)   return { supabase, status: 400 as const, error: "No application" as const };
+  if (appErr) return { supabase, status: 500, error: appErr.message };
+  if (!app)   return { supabase, status: 400, error: "No application" };
 
   return { supabase, appId: app.id as string };
 }
