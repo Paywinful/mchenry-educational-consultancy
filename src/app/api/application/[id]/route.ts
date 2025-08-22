@@ -38,7 +38,7 @@ async function ensureOwnApp(
   return { status: 200, user, app };
 }
 
-export async function GET(_req: Request, ctx: Ctx) {
+export async function GET(_req: Request, ctx: any) {
   const supabase = await supabaseRoute(); // ✅ await the async helper
   const ensure = await ensureOwnApp(supabase, ctx.params.id);
 
@@ -87,7 +87,7 @@ export async function GET(_req: Request, ctx: Ctx) {
   });
 }
 
-export async function PUT(req: Request, ctx: Ctx) {
+export async function PUT(req: Request, ctx: any) {
   const supabase = await supabaseRoute(); // ✅ await the async helper
   const ensure = await ensureOwnApp(supabase, ctx.params.id);
 
