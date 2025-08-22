@@ -1,52 +1,97 @@
-import { NextResponse } from 'next/server';
-import { supabaseRoute } from '@/lib/supabase/server';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { NextResponse } from "next/server";
+import { supabaseRoute } from "@/lib/supabase/server";
 
-type Ctx = { params: { id: string } };
+// Body shape matches your SQL columns (all optional on input)
+type PrefsBody = {
+  selected_institution_ids?: string[] | null;
+  preferred_program?: string | null;
+  degree_level?: string | null;
+  start_term?: string | null;
+  additional_info?: string | null;
+};
 
-export async function POST(req: Request, ctx: Ctx) {
-  const supabase = supabaseRoute();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+function coerceId(raw: string | string[] | undefined): string | null {
+  if (Array.isArray(raw)) return raw[0] ?? null;
+  return raw ?? null;
+}
 
-  // ensure the app belongs to the user
-  const { data: app } = await supabase
-    .from('applications')
-    .select('id,user_id')
-    .eq('id', ctx.params.id)
-    .eq('user_id', user.id)
+// Minimal sanitization to only keep allowed keys and normalize undefined→null
+function sanitize(body: PrefsBody): PrefsBody {
+  return {
+    selected_institution_ids:
+      Array.isArray(body.selected_institution_ids) ? body.selected_institution_ids : body.selected_institution_ids ?? null,
+    preferred_program: body.preferred_program ?? null,
+    degree_level: body.degree_level ?? null,
+    start_term: body.start_term ?? null,
+    additional_info: body.additional_info ?? null,
+  };
+}
+
+export async function POST(req: Request, ctx: any) {
+  const appId = coerceId(ctx?.params?.id);
+  if (!appId) return NextResponse.json({ error: "Missing id" }, { status: 400 });
+
+  const supabase = await supabaseRoute();
+
+  // Auth
+  const {
+    data: { user },
+    error: userErr,
+  } = await supabase.auth.getUser();
+  if (userErr || !user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  // Ownership check
+  const { data: app, error: appErr } = await supabase
+    .from("applications")
+    .select("id,user_id")
+    .eq("id", appId)
+    .eq("user_id", user.id)
     .maybeSingle();
 
-  if (!app) return NextResponse.json({ error: 'Not found' }, { status: 404 });
+  if (appErr) return NextResponse.json({ error: appErr.message }, { status: 500 });
+  if (!app) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
-  const body = await req.json();
+  // Parse & sanitize body
+  let raw: unknown;
+  try {
+    raw = await req.json();
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+  }
+  const body = sanitize((raw ?? {}) as PrefsBody);
 
-  // save / update preferences
+  // Upsert 1:1 record by application_id
   const { error: upErr } = await supabase
-    .from('institution_preferences')
-    .upsert({ application_id: app.id, ...body }, { onConflict: 'application_id' });
+    .from("institution_preferences")
+    .upsert(
+      { application_id: app.id, ...body },
+      { onConflict: "application_id" } // relies on UNIQUE(application_id)
+    );
 
   if (upErr) return NextResponse.json({ error: upErr.message }, { status: 500 });
 
-  // ---- NEW: set application.title to the first selected university's name ----
-  const firstId: string | undefined =
-    Array.isArray(body?.selected_institution_ids) && body.selected_institution_ids.length > 0
+  // Optional: set application.title to first selected institution name (if present)
+  const firstId =
+    Array.isArray(body.selected_institution_ids) && body.selected_institution_ids.length > 0
       ? body.selected_institution_ids[0]
       : undefined;
 
   if (firstId) {
-    // Look up in the institutions table; if found, set as title
-    const { data: inst } = await supabase
-      .from('institutions')
-      .select('name, type')
-      .eq('id', firstId)
+    const { data: inst, error: instErr } = await supabase
+      .from("institutions")
+      .select("name")
+      .eq("id", firstId)
       .maybeSingle();
 
-    // only set a human title if we have a name (typically tertiary/university rows)
-    if (inst?.name) {
+    if (!instErr && inst?.name) {
+      // Best-effort; ignore failure to keep endpoint idempotent
       await supabase
-        .from('applications')
+        .from("applications")
         .update({ title: inst.name, updated_at: new Date().toISOString() })
-        .eq('id', app.id);
+        .eq("id", app.id);
     }
   }
 
