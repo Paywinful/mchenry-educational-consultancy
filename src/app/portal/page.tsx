@@ -1,13 +1,22 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-
 "use client";
 
-import { useState, useEffect } from "react";
+import { Suspense, useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { supabaseClient } from "@/lib/supabase/client";
 
+// ---- Outer wrapper adds Suspense (required for useSearchParams) ----
 export default function Portal() {
+  return (
+    <Suspense fallback={<div className="min-h-screen grid place-items-center">Loading…</div>}>
+      <PortalInner />
+    </Suspense>
+  );
+}
+
+// ---- All your existing logic lives here ----
+function PortalInner() {
   const [isSignUp, setIsSignUp] = useState(false);
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
@@ -34,7 +43,9 @@ export default function Portal() {
       if (!res.ok) throw new Error("no profile yet");
       const { profile } = await res.json();
       if (profile?.is_admin) return "/portal/dashboard/admin";
-    } catch {}
+    } catch {
+      // ignore – fallback to student
+    }
     return "/portal/dashboard/student";
   }
 
@@ -57,8 +68,7 @@ export default function Portal() {
         });
         if (error) throw error;
 
-        // If your project requires email confirmation, data.session will be null here.
-        // In that case, don’t call protected APIs yet—ask user to verify.
+        // If email confirmation is on, session will be null
         if (!data.session) {
           alert("Check your email to confirm your account, then sign in.");
           return;
