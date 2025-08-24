@@ -59,15 +59,20 @@ export async function POST(
   }
 
   // Optional: notify applicant (service role bypasses RLS)
-  await adminDb
-    .from("notifications")
-    .insert({
-      user_id: row.user_id,
-      title: "Application accepted",
-      body: "Congrats! Your application has been accepted.",
-      type: "application",
-    })
-    .catch(() => {});
+ const { error: notifErr } = await adminDb
+  .from("notifications")
+  .insert({
+    user_id: row.user_id,
+    title: "Application accepted",
+    body: "Congrats! Your application has been accepted.",
+    type: "application",
+  });
+
+if (notifErr) {
+  // optionally log, but don’t fail the request
+  console.error("notify applicant failed:", notifErr.message);
+}
+
 
   return NextResponse.json({ ok: true, application: row });
 }
