@@ -1,18 +1,22 @@
 import { NextResponse } from "next/server";
 import { getAdminClient } from "../_util";
 
-export async function GET() {
-  const admin = await getAdminClient();
-  if ("error" in admin) return admin.error;
-  const { supabase } = admin;
+export const runtime = "nodejs";
 
-  // Payments with receipts (likely pending)
+export async function GET(): Promise<NextResponse> {
+  const admin = (await getAdminClient()) as any;
+  if (admin?.error) return admin.error as NextResponse;
+
+  const { supabase } = admin as { supabase: any };
+
+  // Payments needing attention
   const { data: payments, error: payErr } = await supabase
     .from("payments")
-    .select("id,user_id,application_id,payment_type,amount_ghs,status,due_date,paid_at,receipt_url,method,provider_ref")
-    .or("status.eq.pending,status.eq.overdue")
+    .select(
+      "id,user_id,application_id,payment_type,amount_ghs,status,due_date,paid_at,receipt_url,method,provider_ref"
+    )
+    .in("status", ["pending", "overdue"])
     .order("due_date", { ascending: true });
-
   if (payErr) return NextResponse.json({ error: payErr.message }, { status: 500 });
 
   // Applications not yet accepted
@@ -21,8 +25,10 @@ export async function GET() {
     .select("id,user_id,status,progress,created_at,updated_at")
     .neq("status", "accepted")
     .order("created_at", { ascending: false });
-
   if (appErr) return NextResponse.json({ error: appErr.message }, { status: 500 });
 
-  return NextResponse.json({ payments: payments ?? [], applications: applications ?? [] });
+  return NextResponse.json({
+    payments: payments ?? [],
+    applications: applications ?? [],
+  });
 }
