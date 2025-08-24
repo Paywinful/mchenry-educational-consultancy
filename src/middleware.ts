@@ -1,13 +1,9 @@
 ﻿import { NextResponse, type NextRequest } from "next/server";
 import { createServerClient, type CookieOptions } from "@supabase/ssr";
+import type { Database } from "@/lib/supabase/types";
 
-export async function middleware(request: NextRequest) {
-  // Prepare a response so we can write refreshed cookies to it
-  const response = NextResponse.next({ request });
-
-  // Supabase client wired to read from the incoming request cookies
-  // and write refreshed cookies to the outgoing response.
-  const supabase = createServerClient(
+function createSupabaseInMiddleware(request: NextRequest, response: NextResponse) {
+  return createServerClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
@@ -24,19 +20,65 @@ export async function middleware(request: NextRequest) {
       },
     }
   );
+}
 
-  // 1) This call refreshes tokens if needed and ensures cookies are up-to-date
+// Helper: keep refreshed cookies when returning a redirect
+function withRefreshedCookies(from: NextResponse, to: NextResponse) {
+  for (const cookie of from.cookies.getAll()) {
+    to.cookies.set(cookie);
+  }
+  return to;
+}
+
+export async function middleware(request: NextRequest) {
+  // Prepare a response so Supabase can refresh cookies onto it
+  const response = NextResponse.next({ request });
+  const supabase = createSupabaseInMiddleware(request, response);
+
+  // 1) Refresh tokens if needed and get current user
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // 2) Protect your dashboard
-  const isDashboard = request.nextUrl.pathname.startsWith("/portal/dashboard");
+  const path = request.nextUrl.pathname;
+  const isDashboard = path.startsWith("/portal/dashboard");
+
+  // 2) Gate the whole dashboard
   if (isDashboard && !user) {
-    return NextResponse.redirect(new URL("/portal", request.url));
+    const url = new URL("/portal", request.url);
+    url.searchParams.set("redirect", path);
+    return withRefreshedCookies(response, NextResponse.redirect(url));
   }
 
-  // Return the response so the refreshed cookies reach the browser
+  // 3) Only check admin when it matters (admin area or root redirect)
+  let isAdmin = false;
+  const needsAdminCheck =
+    !!user &&
+    (path.startsWith("/portal/dashboard/admin") ||
+      path === "/portal/dashboard" ||
+      path === "/portal/dashboard/");
+
+  if (needsAdminCheck) {
+    const { data: rpcIsAdmin } = await supabase.rpc("is_admin");
+    isAdmin = !!rpcIsAdmin;
+  }
+
+  // 4) Protect admin area
+  if (path.startsWith("/portal/dashboard/admin") && !isAdmin) {
+    const url = new URL("/portal/dashboard/student", request.url);
+    return withRefreshedCookies(response, NextResponse.redirect(url));
+  }
+
+  // 5) Smart default: /portal/dashboard -> role home
+  if (path === "/portal/dashboard" || path === "/portal/dashboard/") {
+    const url = new URL(
+      isAdmin ? "/portal/dashboard/admin" : "/portal/dashboard/student",
+      request.url
+    );
+    return withRefreshedCookies(response, NextResponse.redirect(url));
+  }
+
+  // Return the response so any refreshed cookies reach the browser
   return response;
 }
 

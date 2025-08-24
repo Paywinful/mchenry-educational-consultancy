@@ -9,6 +9,9 @@ import { AcademicBackgroundForm } from "@/components/student/forms/academic-back
 import { InstitutionPreferencesForm } from "@/components/student/forms/institution-preferences-form";
 import { DocumentUploadForm } from "@/components/student/forms/document-upload-form";
 import { toast } from "@/components/toast";
+import { Trash2 } from "lucide-react";
+
+
 
 /* UI shims */
 const Card = ({ children, className = "", ...props }: React.HTMLAttributes<HTMLDivElement>) => (
@@ -118,6 +121,35 @@ export default function ApplicationPage() {
       setLoadingDetails(false);
     }
   }, []);
+
+  // inside component:
+const deleteApplication = useCallback(async (id: string) => {
+  const yes = window.confirm("Delete this application? This will also remove any payments tied to it.");
+  if (!yes) return;
+
+  try {
+    const res = await fetch(`/api/application/${id}`, { method: "DELETE" });
+    const ct = res.headers.get("content-type") || "";
+    const json = ct.includes("application/json") ? await res.json() : { error: await res.text() };
+    if (!res.ok) throw new Error(json?.error || `Delete failed (HTTP ${res.status})`);
+
+    // remove from local list
+    setApps((prev) => prev.filter((a) => a.id !== id));
+
+    // clear selection if it was this one
+    setSelectedId((cur) => (cur === id ? null : cur));
+
+    // hide wizard if none left
+    setShowWizard((prev) => {
+      const left = apps.filter((a) => a.id !== id).length;
+      return left > 0 ? prev : false;
+    });
+
+    toast.success("Application deleted");
+  } catch (e: any) {
+    toast.error(e?.message || "Could not delete application");
+  }
+}, [apps]);
 
   useEffect(() => { loadApps(); }, [loadApps]);
   useEffect(() => { if (selectedId) loadDetails(selectedId); }, [selectedId, loadDetails]);
@@ -253,31 +285,42 @@ export default function ApplicationPage() {
           ) : (
             <div className="space-y-2">
               {apps.map((a) => {
-                const active = selectedId === a.id;
-                return (
-                  <button
-                    key={a.id}
-                    className={`w-full text-left p-3 rounded border transition ${
-                      active ? "border-[#6B0F10] bg-blue-50" : "border-gray-200 hover:bg-gray-50"
-                    }`}
-                    onClick={() => {
-                      setSelectedId(a.id);
-                      setShowWizard(true);
-                      toast.info("Opened application");
-                    }}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="font-semibold truncate">
-                        {a.title?.trim() || `Application • ${fmt(a.created_at)}`}
-                      </div>
-                      <Badge>{a.status || "in_progress"}</Badge>
-                    </div>
-                    <div className="text-xs text-gray-500 mt-1">
-                      Updated {fmt(a.updated_at)}
-                    </div>
-                  </button>
-                );
-              })}
+  const active = selectedId === a.id;
+  return (
+    <div key={a.id} className="flex items-stretch gap-2">
+      <button
+        className={`flex-1 text-left p-3 rounded border transition ${
+          active ? "border-[#6B0F10] bg-blue-50" : "border-gray-200 hover:bg-gray-50"
+        }`}
+        onClick={() => {
+          setSelectedId(a.id);
+          setShowWizard(true);
+          toast.info("Opened application");
+        }}
+      >
+        <div className="flex items-center justify-between">
+          <div className="font-semibold truncate">
+            {a.title?.trim() || `Application • ${fmt(a.created_at)}`}
+          </div>
+          <Badge>{a.status || "in_progress"}</Badge>
+        </div>
+        <div className="text-xs text-gray-500 mt-1">
+          Updated {fmt(a.updated_at)}
+        </div>
+      </button>
+
+      <button
+        aria-label="Delete application"
+        className="px-3 py-2 rounded border bg-white text-red-600 hover:bg-red-50"
+        onClick={() => deleteApplication(a.id)}
+        title="Delete"
+      >
+        <Trash2 className="h-4 w-4" />
+      </button>
+    </div>
+  );
+})}
+
             </div>
           )}
         </CardContent>

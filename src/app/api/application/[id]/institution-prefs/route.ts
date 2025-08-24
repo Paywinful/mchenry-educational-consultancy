@@ -2,7 +2,6 @@
 import { NextResponse } from "next/server";
 import { supabaseRoute } from "@/lib/supabase/server";
 
-// Body shape matches your SQL columns (all optional on input)
 type PrefsBody = {
   selected_institution_ids?: string[] | null;
   preferred_program?: string | null;
@@ -11,16 +10,12 @@ type PrefsBody = {
   additional_info?: string | null;
 };
 
-function coerceId(raw: string | string[] | undefined): string | null {
-  if (Array.isArray(raw)) return raw[0] ?? null;
-  return raw ?? null;
-}
-
-// Minimal sanitization to only keep allowed keys and normalize undefined→null
 function sanitize(body: PrefsBody): PrefsBody {
   return {
     selected_institution_ids:
-      Array.isArray(body.selected_institution_ids) ? body.selected_institution_ids : body.selected_institution_ids ?? null,
+      Array.isArray(body.selected_institution_ids)
+        ? body.selected_institution_ids
+        : body.selected_institution_ids ?? null,
     preferred_program: body.preferred_program ?? null,
     degree_level: body.degree_level ?? null,
     start_term: body.start_term ?? null,
@@ -28,8 +23,9 @@ function sanitize(body: PrefsBody): PrefsBody {
   };
 }
 
-export async function POST(req: Request, ctx: any) {
-  const appId = coerceId(ctx?.params?.id);
+// Note the typed ctx with Promise params, and awaiting it below
+export async function POST(req: Request, ctx: { params: Promise<{ id: string }> }) {
+  const { id: appId } = await ctx.params; // <-- await required in Next.js 15
   if (!appId) return NextResponse.json({ error: "Missing id" }, { status: 400 });
 
   const supabase = await supabaseRoute();
@@ -68,12 +64,12 @@ export async function POST(req: Request, ctx: any) {
     .from("institution_preferences")
     .upsert(
       { application_id: app.id, ...body },
-      { onConflict: "application_id" } // relies on UNIQUE(application_id)
+      { onConflict: "application_id" } // requires UNIQUE(application_id)
     );
 
   if (upErr) return NextResponse.json({ error: upErr.message }, { status: 500 });
 
-  // Optional: set application.title to first selected institution name (if present)
+  // Optional: set application.title from first selected institution
   const firstId =
     Array.isArray(body.selected_institution_ids) && body.selected_institution_ids.length > 0
       ? body.selected_institution_ids[0]
@@ -87,7 +83,6 @@ export async function POST(req: Request, ctx: any) {
       .maybeSingle();
 
     if (!instErr && inst?.name) {
-      // Best-effort; ignore failure to keep endpoint idempotent
       await supabase
         .from("applications")
         .update({ title: inst.name, updated_at: new Date().toISOString() })

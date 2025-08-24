@@ -1,122 +1,85 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+// src/app/api/applications/[id]/route.ts
 import { NextResponse } from "next/server";
 import { supabaseRoute } from "@/lib/supabase/server";
-import type { SupabaseClient } from "@supabase/supabase-js";
-import type { Database } from "@/lib/supabase/types"; // adjust path if different
 
-// type Ctx = { params: { id: string } };
+type Ctx = { params: Promise<{ id: string }> };
 
-type EnsureOk = {
-  status: 200;
-  user: NonNullable<Awaited<ReturnType<SupabaseClient["auth"]["getUser"]>>["data"]["user"]>;
-  app: any;
-};
-type EnsureErr =
-  | { status: 401 }
-  | { status: 404 }
-  | { status: 500; message: string };
+/** Optional: GET one app (helpful for debugging) */
+export async function GET(_req: Request, ctx: Ctx) {
+  const { id } = await ctx.params;           // ✅ await params
+  const supabase = await supabaseRoute();    // ✅ await supabase
 
-async function ensureOwnApp(
-  supabase: SupabaseClient<Database>,
-  id: string
-): Promise<EnsureOk | EnsureErr> {
   const {
     data: { user },
     error: userErr,
   } = await supabase.auth.getUser();
-  if (userErr || !user) return { status: 401 };
+  if (userErr || !user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
 
-  const { data: app, error: appErr } = await supabase
+  const { data, error } = await supabase
     .from("applications")
     .select("*")
     .eq("id", id)
     .eq("user_id", user.id)
     .maybeSingle();
 
-  if (appErr) return { status: 500, message: appErr.message };
-  if (!app) return { status: 404 };
-  return { status: 200, user, app };
-}
-
-export async function GET(_req: Request, ctx: any) {
-  const supabase = await supabaseRoute(); // ✅ await the async helper
-  const ensure = await ensureOwnApp(supabase, ctx.params.id);
-
-  if (ensure.status !== 200) {
-    const msg =
-      ensure.status === 404
-        ? "Not found"
-        : ensure.status === 401
-        ? "Unauthorized"
-        : (ensure as any).message || "Server error";
-    return NextResponse.json({ error: msg }, { status: ensure.status });
-  }
-
-  const { app } = ensure;
-
-  const [
-    { data: education },
-    { data: testScores },
-    { data: prefs },
-    { data: docs },
-  ] = await Promise.all([
-    supabase
-      .from("education_history")
-      .select("*")
-      .eq("application_id", app.id)
-      .order("start_year", { ascending: true }),
-    supabase.from("test_scores").select("*").eq("application_id", app.id).maybeSingle(),
-    supabase
-      .from("institution_preferences")
-      .select("*")
-      .eq("application_id", app.id)
-      .maybeSingle(),
-    supabase
-      .from("documents")
-      .select("*")
-      .eq("application_id", app.id)
-      .order("uploaded_at", { ascending: false }),
-  ]);
-
-  return NextResponse.json({
-    application: app,
-    education: education ?? [],
-    testScores: testScores ?? null,
-    preferences: prefs ?? null,
-    documents: docs ?? [],
-  });
-}
-
-export async function PUT(req: Request, ctx: any) {
-  const supabase = await supabaseRoute(); // ✅ await the async helper
-  const ensure = await ensureOwnApp(supabase, ctx.params.id);
-
-  if (ensure.status !== 200) {
-    const msg =
-      ensure.status === 404
-        ? "Not found"
-        : ensure.status === 401
-        ? "Unauthorized"
-        : (ensure as any).message || "Server error";
-    return NextResponse.json({ error: msg }, { status: ensure.status });
-  }
-
-  const { app } = ensure;
-
-  let body: any;
-  try {
-    body = await req.json(); // e.g., { status, progress }
-  } catch {
-    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
-  }
-
-  const { data, error } = await supabase
-    .from("applications")
-    .update({ ...body, updated_at: new Date().toISOString() })
-    .eq("id", app.id)
-    .select("*")
-    .single();
-
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  if (!data) return NextResponse.json({ error: "Not found" }, { status: 404 });
   return NextResponse.json({ application: data });
+}
+
+export async function DELETE(
+  _req: Request,
+  { params }: { params: { id: string } }
+) {
+  const supabase = await supabaseRoute();
+
+  const {
+    data: { user },
+    error: uErr,
+  } = await supabase.auth.getUser();
+  if (uErr) return NextResponse.json({ error: uErr.message }, { status: 500 });
+  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  // Admins may delete any app; students only their own.
+  const { data: isAdmin, error: aErr } = await supabase.rpc("is_admin");
+  if (aErr) return NextResponse.json({ error: aErr.message }, { status: 500 });
+
+  const appQuery = supabase
+    .from("applications")
+    .select("id,user_id,status")
+    .eq("id", params.id)
+    .maybeSingle();
+
+  const { data: app, error: appErr } = isAdmin
+    ? await appQuery
+    : await appQuery.eq("user_id", user.id);
+
+  if (appErr) return NextResponse.json({ error: appErr.message }, { status: 500 });
+  if (!app) return NextResponse.json({ error: "Not found" }, { status: 404 });
+
+  // Students cannot delete accepted apps; admins can.
+  if (!isAdmin && app.status === "accepted") {
+    return NextResponse.json(
+      { error: "Accepted applications cannot be deleted." },
+      { status: 409 } // conflict with resource state
+    );
+  }
+
+  // If you have FK payments(application_id) REFERENCES applications(id) ON DELETE CASCADE,
+  // you can remove this explicit payments delete.
+  const { error: payDelErr } = await supabase
+    .from("payments")
+    .delete()
+    .eq("application_id", app.id);
+  if (payDelErr) return NextResponse.json({ error: payDelErr.message }, { status: 500 });
+
+  const { error: delErr } = await supabase
+    .from("applications")
+    .delete()
+    .eq("id", app.id);
+  if (delErr) return NextResponse.json({ error: delErr.message }, { status: 500 });
+
+  return NextResponse.json({ ok: true });
 }

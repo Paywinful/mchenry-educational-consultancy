@@ -6,6 +6,7 @@ import type React from "react";
 import { useState, useCallback } from "react";
 import { Upload, CheckCircle, AlertCircle, Download, Trash2 } from "lucide-react";
 import { supabaseClient } from "@/lib/supabase/client";
+import { toast } from "@/components/toast";
 
 const Card = ({ children, className = "", ...props }: React.HTMLAttributes<HTMLDivElement>) => (
   <div className={`bg-white rounded-lg shadow border ${className}`} {...props}>{children}</div>
@@ -235,8 +236,10 @@ export function DocumentUploadForm({ applicationId, initialDocuments, onPrev }: 
 
         <div className="flex justify-between my-2">
           <Button type="button" onClick={onPrev} className="bg-white border text-blue-600 hover:bg-blue-50">Previous</Button>
-          <Button className="bg-green-600 hover:bg-green-700">
-            <CheckCircle className="h-4 w-4 mr-2" /> Submit Application
+          <Button onClick={()=> {
+              toast.success("Application Submitted")
+            }} className="bg-green-600 hover:bg-green-700">
+            <CheckCircle  className="h-4 w-4 mr-2" /> Submit Application
           </Button>
         </div>
       </CardContent>

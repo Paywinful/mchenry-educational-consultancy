@@ -1,35 +1,52 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { supabaseClient } from "@/lib/supabase/client";
-import { toast } from "@/components/toast";
 
 export default function Portal() {
   const [isSignUp, setIsSignUp] = useState(false);
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [submitting, setSubmitting] = useState(false);
-
   const supabase = supabaseClient();
   const router = useRouter();
+  const qs = useSearchParams();
+
+  // If already authenticated, bounce to dashboard
+  useEffect(() => {
+    (async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        const dest = await getDefaultDashboard();
+        router.replace(dest);
+      }
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  async function getDefaultDashboard(): Promise<string> {
+    try {
+      const res = await fetch("/api/profile", { cache: "no-store", credentials: "include" });
+      if (!res.ok) throw new Error("no profile yet");
+      const { profile } = await res.json();
+      if (profile?.is_admin) return "/portal/dashboard/admin";
+    } catch {}
+    return "/portal/dashboard/student";
+  }
+
+  async function ensureSignedOut() {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session) await supabase.auth.signOut();
+  }
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (submitting) return;
-    setSubmitting(true);
-
     try {
       if (isSignUp) {
-        if (!fullName.trim()) {
-          toast.warning("Please enter your full name");
-          setSubmitting(false);
-          return;
-        }
+        // Important: clear any existing session so we don’t update the current user
+        await ensureSignedOut();
 
         const { data, error } = await supabase.auth.signUp({
           email,
@@ -38,39 +55,37 @@ export default function Portal() {
         });
         if (error) throw error;
 
-        if (data.user) {
-          // Create profile shell + app shell
-          const first = fullName.split(" ")[0] || "";
-          const last = fullName.split(" ").slice(1).join(" ");
-          await fetch("/api/profile", {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              email,
-              first_name: first,
-              last_name: last,
-            }),
-          });
-          await fetch("/api/application", { method: "POST" });
+        // If your project requires email confirmation, data.session will be null here.
+        // In that case, don’t call protected APIs yet—ask user to verify.
+        if (!data.session) {
+          alert("Check your email to confirm your account, then sign in.");
+          return;
         }
 
-        toast.success("Account created");
-        toast.info("You may need to verify your email to sign in.");
-        router.push("/portal/dashboard/student");
-      } else {
-        const { error } = await supabase.auth.signInWithPassword({
-          email,
-          password,
+        // New user is signed in -> create profile & starter application as THAT user
+        await fetch("/api/profile", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email,
+            first_name: fullName.split(" ")[0] || "",
+            last_name: fullName.split(" ").slice(1).join(" "),
+          }),
+          credentials: "include",
         });
+        await fetch("/api/application", { method: "POST", credentials: "include" });
+
+        const redirect = qs.get("redirect");
+        router.push(redirect || (await getDefaultDashboard()));
+      } else {
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
 
-        toast.success("Welcome back!");
-        router.push("/portal/dashboard/student");
+        const redirect = qs.get("redirect");
+        router.push(redirect || (await getDefaultDashboard()));
       }
     } catch (err: any) {
-      toast.error(err?.message || "Authentication error");
-    } finally {
-      setSubmitting(false);
+      alert(err?.message || "Authentication error");
     }
   }
 
@@ -80,7 +95,7 @@ export default function Portal() {
         <Image src="/about.png" alt="heroleft" fill className="object-cover" />
       </div>
 
-      <div className="w-full md:w-1/2 h-full flex items-center justify-center bg-white">
+      <div className="w-1/2 h-full flex items-center justify-center bg-white">
         <div className="text-center w-80">
           <h3 className="text-2xl font-bold mb-6">
             {isSignUp ? "Sign Up" : "Sign In"}
@@ -114,17 +129,8 @@ export default function Portal() {
               required
             />
 
-            <button
-              className="bg-[#6B0F10] text-white px-4 py-2 rounded w-full hover:bg-[#951A1B] transition disabled:opacity-60"
-              disabled={submitting}
-            >
-              {submitting
-                ? isSignUp
-                  ? "Creating..."
-                  : "Signing in..."
-                : isSignUp
-                ? "Create Account"
-                : "Login"}
+            <button className="bg-[#6B0F10] text-white px-4 py-2 rounded w-full hover:bg-[#951A1B] transition">
+              {isSignUp ? "Create Account" : "Login"}
             </button>
           </form>
 
@@ -133,7 +139,10 @@ export default function Portal() {
               <>
                 Already have an account?{" "}
                 <button
-                  onClick={() => setIsSignUp(false)}
+                  onClick={async () => {
+                    await ensureSignedOut(); // avoid weird state if toggling while logged in
+                    setIsSignUp(false);
+                  }}
                   className="text-blue-600 hover:underline"
                 >
                   Sign in
@@ -143,7 +152,10 @@ export default function Portal() {
               <>
                 Don’t have an account?{" "}
                 <button
-                  onClick={() => setIsSignUp(true)}
+                  onClick={async () => {
+                    await ensureSignedOut();
+                    setIsSignUp(true);
+                  }}
                   className="text-blue-600 hover:underline"
                 >
                   Sign up
