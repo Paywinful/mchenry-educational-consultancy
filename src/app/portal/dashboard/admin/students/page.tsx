@@ -162,7 +162,7 @@ export default function AdminStudentsPage() {
                         </div>
                       </Td>
                       <Td>{s.email || "—"}</Td>
-                      <Td className="font-mono">{s.user_id.slice(0, 8)}…</Td>
+                      <Td>{s.user_id.slice(0, 8)}…</Td>
                       <Td>{s.phone || "—"}</Td>
                       <Td>{s.applications_count ?? 0}</Td>
                       <Td>{s.updated_at ? new Date(s.updated_at).toLocaleString() : "—"}</Td>

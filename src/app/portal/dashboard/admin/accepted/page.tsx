@@ -142,7 +142,7 @@ export default function AdminAcceptedApplicationsPage() {
                         </div>
                       </Td>
                       <Td>{a.profile?.email || "—"}</Td>
-                      <Td className="font-mono">{a.id.slice(0, 8)}…</Td>
+                      <Td>{a.id.slice(0, 8)}…</Td>
                       <Td>{new Date(a.updated_at).toLocaleString()}</Td>
                       <Td>
                         <span className="inline-block px-2 py-0.5 rounded text-xs bg-green-100 text-green-700">
