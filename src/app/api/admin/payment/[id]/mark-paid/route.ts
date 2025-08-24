@@ -8,13 +8,13 @@ export const revalidate = 0;
 export async function POST(
   _req: Request,
   ctx: { params: Promise<{ id: string }> }
-) {
-  const { id: paymentId } = await ctx.params; // Next 15: params is async
+): Promise<NextResponse> {
+  const { id: paymentId } = await ctx.params;
   if (!/^[0-9a-fA-F-]{36}$/.test(paymentId)) {
     return NextResponse.json({ error: "Invalid id" }, { status: 400 });
   }
 
-  const userClient = await supabaseRoute(); // must await for cookies in Next 15
+  const userClient = await supabaseRoute();
   const {
     data: { user },
     error: uErr,
@@ -22,7 +22,6 @@ export async function POST(
   if (uErr) return NextResponse.json({ error: uErr.message }, { status: 500 });
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  // Admin gate via RPC (avoids needing profile SELECT policy)
   const { data: isAdmin, error: aErr } = await userClient.rpc("is_admin");
   if (aErr) return NextResponse.json({ error: aErr.message }, { status: 500 });
   if (!isAdmin) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
@@ -30,7 +29,7 @@ export async function POST(
   const adminDb = supabaseAdmin();
   const now = new Date().toISOString();
 
-  // Avoid double-marking: only update if not already paid
+  // Mark paid only if not already paid
   const { data: row, error } = await adminDb
     .from("payments")
     .update({ status: "paid", paid_at: now, method: "admin" })
@@ -40,9 +39,9 @@ export async function POST(
     .maybeSingle();
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+
   if (!row) {
-    // Either not found or already paid
-    // Check if it exists to return a better code
+    // Distinguish not found vs already paid
     const { data: exists, error: e2 } = await adminDb
       .from("payments")
       .select("id,status")
@@ -56,16 +55,19 @@ export async function POST(
     return NextResponse.json({ error: "Nothing to update" }, { status: 409 });
   }
 
-  // Optional: notify the user (service role bypasses RLS)
-  await adminDb
+  // Optional: notify the user; don't fail request if this errors
+  const { error: notifErr } = await adminDb
     .from("notifications")
     .insert({
       user_id: row.user_id,
       title: "Payment confirmed",
       body: `Your payment (${row.payment_type || "Payment"}) has been marked as paid.`,
       type: "payment",
-    })
-    .catch(() => {});
+    });
+  if (notifErr) {
+    // eslint-disable-next-line no-console
+    console.error("notify failed:", notifErr.message);
+  }
 
   return NextResponse.json({ ok: true, payment: row });
 }
