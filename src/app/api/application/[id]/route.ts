@@ -4,10 +4,9 @@ import { supabaseRoute } from "@/lib/supabase/server";
 
 type Ctx = { params: Promise<{ id: string }> };
 
-/** Optional: GET one app (helpful for debugging) */
 export async function GET(_req: Request, ctx: Ctx) {
-  const { id } = await ctx.params;           // ✅ await params
-  const supabase = await supabaseRoute();    // ✅ await supabase
+  const { id } = await ctx.params;
+  const supabase = await supabaseRoute();
 
   const {
     data: { user },
@@ -29,11 +28,9 @@ export async function GET(_req: Request, ctx: Ctx) {
   return NextResponse.json({ application: data });
 }
 
-export async function DELETE(
-  _req: Request,
-  { params }: { params: { id: string } }
-) {
-  const supabase = await supabaseRoute();
+export async function DELETE(_req: Request, ctx: Ctx): Promise<NextResponse> {
+  const { id } = await ctx.params;            // ✅ await params
+  const supabase = await supabaseRoute();     // ✅ await supabase
 
   const {
     data: { user },
@@ -49,7 +46,7 @@ export async function DELETE(
   const appQuery = supabase
     .from("applications")
     .select("id,user_id,status")
-    .eq("id", params.id)
+    .eq("id", id)
     .maybeSingle();
 
   const { data: app, error: appErr } = isAdmin
@@ -63,12 +60,11 @@ export async function DELETE(
   if (!isAdmin && app.status === "accepted") {
     return NextResponse.json(
       { error: "Accepted applications cannot be deleted." },
-      { status: 409 } // conflict with resource state
+      { status: 409 }
     );
   }
 
-  // If you have FK payments(application_id) REFERENCES applications(id) ON DELETE CASCADE,
-  // you can remove this explicit payments delete.
+  // If you have ON DELETE CASCADE on payments.application_id -> applications.id, remove this block.
   const { error: payDelErr } = await supabase
     .from("payments")
     .delete()
