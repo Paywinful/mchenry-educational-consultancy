@@ -5,6 +5,7 @@ import { Suspense, useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { supabaseClient } from "@/lib/supabase/client";
+import { toast } from "@/components/toast";
 
 // ---- Outer wrapper adds Suspense (required for useSearchParams) ----
 export default function Portal() {
@@ -64,27 +65,31 @@ function PortalInner() {
         const { data, error } = await supabase.auth.signUp({
           email,
           password,
+          // The DB trigger reads this to prefill first/last name
           options: { data: { full_name: fullName } },
         });
         if (error) throw error;
 
-        // If email confirmation is on, session will be null
+        // If email confirmation is ON: session will be null.
+        // The DB trigger already created the profile row. No API calls needed.
         if (!data.session) {
-          alert("Check your email to confirm your account, then sign in.");
+          toast.success("Check your email to confirm your account, then sign in.");
           return;
         }
 
-        // New user is signed in -> create profile & starter application as THAT user
+        // If there IS a session (e.g., dev without email confirmation),
+        // we can still upsert extra profile fields and create a starter application.
+        const first = fullName.split(" ")[0] || "";
+        const last = fullName.split(" ").slice(1).join(" ");
+
         await fetch("/api/profile", {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            email,
-            first_name: fullName.split(" ")[0] || "",
-            last_name: fullName.split(" ").slice(1).join(" "),
-          }),
           credentials: "include",
+          body: JSON.stringify({ email, first_name: first, last_name: last }),
         });
+
+        // Optional: create starter application immediately in this flow
         await fetch("/api/application", { method: "POST", credentials: "include" });
 
         const redirect = qs.get("redirect");
@@ -94,10 +99,11 @@ function PortalInner() {
         if (error) throw error;
 
         const redirect = qs.get("redirect");
+        toast.success("Login successfully")
         router.push(redirect || (await getDefaultDashboard()));
       }
     } catch (err: any) {
-      alert(err?.message || "Authentication error");
+      toast.error(err?.message || "Authentication error");
     }
   }
 
@@ -141,7 +147,7 @@ function PortalInner() {
               required
             />
 
-            <button className="bg-[#6B0F10] text-white px-4 py-2 rounded w-full hover:bg-[#951A1B] transition">
+            <button className="bg-[#6B0F10] hover:cursor-pointer text-white px-4 py-2 rounded w-full hover:bg-[#951A1B] transition">
               {isSignUp ? "Create Account" : "Login"}
             </button>
           </form>

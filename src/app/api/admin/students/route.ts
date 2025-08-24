@@ -34,8 +34,8 @@ export async function GET(req: Request) {
   const adminDb = supabaseAdmin();
 
   let qry = adminDb
-    .from("student_profiles")
-    .select("user_id,first_name,last_name,email,phone,created_at,is_admin", { count: "exact" })
+    .from("admin_students_v")
+    .select("user_id,first_name,last_name,email,phone,created_at,is_admin,updated_at,applications_count", { count: "exact" })
     .order("created_at", { ascending: false })
     .range(from, to);
 
