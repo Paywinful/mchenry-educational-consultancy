@@ -29,8 +29,8 @@ export async function GET(_req: Request, ctx: Ctx) {
 }
 
 export async function DELETE(_req: Request, ctx: Ctx): Promise<NextResponse> {
-  const { id } = await ctx.params;            // ✅ await params
-  const supabase = await supabaseRoute();     // ✅ await supabase
+  const { id } = await ctx.params;
+  const supabase = await supabaseRoute();
 
   const {
     data: { user },
@@ -43,15 +43,15 @@ export async function DELETE(_req: Request, ctx: Ctx): Promise<NextResponse> {
   const { data: isAdmin, error: aErr } = await supabase.rpc("is_admin");
   if (aErr) return NextResponse.json({ error: aErr.message }, { status: 500 });
 
-  const appQuery = supabase
+  // Build filters first, THEN maybeSingle()
+  let appQ = supabase
     .from("applications")
     .select("id,user_id,status")
-    .eq("id", id)
-    .maybeSingle();
-
-  const { data: app, error: appErr } = isAdmin
-    ? await appQuery
-    : await appQuery.eq("user_id", user.id);
+    .eq("id", id);
+  if (!isAdmin) {
+    appQ = appQ.eq("user_id", user.id);
+  }
+  const { data: app, error: appErr } = await appQ.maybeSingle();
 
   if (appErr) return NextResponse.json({ error: appErr.message }, { status: 500 });
   if (!app) return NextResponse.json({ error: "Not found" }, { status: 404 });
@@ -64,7 +64,7 @@ export async function DELETE(_req: Request, ctx: Ctx): Promise<NextResponse> {
     );
   }
 
-  // If you have ON DELETE CASCADE on payments.application_id -> applications.id, remove this block.
+  // If you have ON DELETE CASCADE on payments(application_id) -> applications(id), remove this block.
   const { error: payDelErr } = await supabase
     .from("payments")
     .delete()
