@@ -34,36 +34,33 @@ function PortalInner() {
   const qs = useSearchParams();
 
   // If already authenticated, bounce to dashboard—BUT skip if coming from a recovery link
- useEffect(() => {
+useEffect(() => {
   (async () => {
-    // 1) Handle PKCE-style links: /portal?code=...&type=recovery
+    // --- PKCE-style link: /portal?code=...&type=recovery ---
     const code = qs.get("code");
     const urlType = qs.get("type");
     if (code && urlType === "recovery") {
       try {
-        // Exchange ?code=... for a session, then show reset form
         const { error } = await supabase.auth.exchangeCodeForSession(code);
         if (error) throw error;
-        setMode("setNewPassword");
-        return; // stop normal bounce-to-dashboard logic
-      } catch (e: any) {
-        console.error(e);
+        setMode("setNewPassword");   // 👈 show the form
+        return;                      // 👈 stop the dashboard bounce
+      } catch {
         toast.error("Recovery link invalid or expired. Request a new one.");
         return;
       }
     }
 
-    // 2) Handle hash-style links: /portal#access_token=...&type=recovery
-    const fromRecovery =
-      (typeof window !== "undefined" && window.location.hash.includes("type=recovery")) ||
-      qs.get("type") === "recovery";
-
-    if (fromRecovery) {
+    // --- Hash-style link: /portal#...type=recovery ---
+    const fromHash =
+      typeof window !== "undefined" &&
+      window.location.hash.includes("type=recovery");
+    if (fromHash || urlType === "recovery") {
       setMode("setNewPassword");
       return;
     }
 
-    // Normal "already signed in?" redirect
+    // --- Normal path: only now bounce signed-in users ---
     const { data: { session } } = await supabase.auth.getSession();
     if (session) {
       const dest = await getDefaultDashboard();
@@ -71,13 +68,14 @@ function PortalInner() {
     }
   })();
 
-  // Keep your existing listener — it still helps in hash-based flows
+  // Keep the listener; some environments emit PASSWORD_RECOVERY here
   const { data: sub } = supabase.auth.onAuthStateChange((event) => {
     if (event === "PASSWORD_RECOVERY") setMode("setNewPassword");
   });
   return () => sub.subscription.unsubscribe();
   // eslint-disable-next-line react-hooks/exhaustive-deps
 }, []);
+
 
 
   async function getDefaultDashboard(): Promise<string> {
@@ -104,7 +102,7 @@ function PortalInner() {
       const origin =
         (typeof window !== "undefined" && window.location.origin) ||
         process.env.NEXT_PUBLIC_APP_URL 
-      const redirectTo = `${origin}/portal`; // redirect right back to THIS page
+      const redirectTo = `${origin}/portal?type=recovery`; // redirect right back to THIS page
       const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo });
       if (error) throw error;
       toast.success("Password reset link sent. Check your email.");
