@@ -18,7 +18,6 @@ export default function Portal() {
 
 type Mode = "signin" | "signup" | "forgot" | "setNewPassword";
 
-// ---- All your existing logic lives here ----
 function PortalInner() {
   const [mode, setMode] = useState<Mode>("signin");
   const [fullName, setFullName] = useState("");
@@ -29,64 +28,73 @@ function PortalInner() {
   const [pw1, setPw1] = useState("");
   const [pw2, setPw2] = useState("");
 
+  // arrival error (e.g., "Your link is invalid or expired")
+  const [arrivalError, setArrivalError] = useState<string | null>(null);
+
   const supabase = supabaseClient();
   const router = useRouter();
   const qs = useSearchParams();
 
+  // Utility to get origin consistently
+  function getOrigin() {
+    return (
+      (typeof window !== "undefined" && window.location.origin) ||
+      (process.env.NEXT_PUBLIC_APP_URL as string)
+    );
+  }
+
   // If already authenticated, bounce to dashboard—BUT skip if coming from a recovery link
   useEffect(() => {
-  (async () => {
-    const code = qs.get("code");
-    const urlType = qs.get("type");
-    const errDesc = qs.get("error_description");
-    // const errCode = qs.get("error_code");
+    (async () => {
+      const code = qs.get("code");
+      const urlType = qs.get("type");
+      const errDesc = qs.get("error_description"); // surfaced by Supabase on error
+      // const errCode = qs.get("error_code") || "";
 
-    // If Supabase redirected with an error, surface it
-    if (errDesc) {
-      toast.error(errDesc); // e.g. "Session expired", "Session not found", etc.
-      // If it was expired/used, offer to resend right away by flipping mode:
-      setMode("forgot");
-      return;
-    }
-
-    // --- PKCE-style link: /portal?code=...&type=recovery ---
-    if (code && urlType === "recovery") {
-      try {
-        const { error } = await supabase.auth.exchangeCodeForSession(code);
-        if (error) throw error;
-        setMode("setNewPassword");
-        return; // don't bounce to dashboard
-      } catch {
-        // If exchange fails (expired/used), push user to request a new link
-        toast.error("Your recovery link is invalid or expired. Please request a new one.");
-        setMode("forgot");
+      if (errDesc) {
+        // Example: "Your link is invalid or expired"
+        setArrivalError(decodeURIComponent(errDesc));
+        setMode("forgot"); // push user to resend right away
         return;
       }
-    }
 
-    // --- Hash-style link: /portal#...type=recovery ---
-    const fromHash =
-      typeof window !== "undefined" && window.location.hash.includes("type=recovery");
-    if (fromHash || urlType === "recovery") {
-      setMode("setNewPassword");
-      return;
-    }
+      // --- PKCE-style link: /portal?code=...&type=recovery ---
+      if (code && urlType === "recovery") {
+        try {
+          const { error } = await supabase.auth.exchangeCodeForSession(code);
+          if (error) throw error;
+          setMode("setNewPassword"); // show the form
+          return;                    // stop the dashboard bounce
+        } catch {
+          setArrivalError("Your recovery link is invalid or expired. Please request a new one.");
+          setMode("forgot");
+          return;
+        }
+      }
 
-    // --- Normal path (no recovery in URL) ---
-    const { data: { session } } = await supabase.auth.getSession();
-    if (session) {
-      const dest = await getDefaultDashboard();
-      router.replace(dest);
-    }
-  })();
+      // --- Hash-style link: /portal#...type=recovery ---
+      const fromHash =
+        typeof window !== "undefined" && window.location.hash.includes("type=recovery");
+      if (fromHash || urlType === "recovery") {
+        setMode("setNewPassword");
+        return;
+      }
 
-  const { data: sub } = supabase.auth.onAuthStateChange((event) => {
-    if (event === "PASSWORD_RECOVERY") setMode("setNewPassword");
-  });
-  return () => sub.subscription.unsubscribe();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-}, []);
+      // --- Normal path: only now bounce signed-in users ---
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        const dest = await getDefaultDashboard();
+        router.replace(dest);
+      }
+    })();
 
+    // Keep the listener; some environments emit PASSWORD_RECOVERY here
+    const { data: sub } = supabase.auth.onAuthStateChange((event) => {
+      if (event === "PASSWORD_RECOVERY") setMode("setNewPassword");
+    });
+    return () => sub.subscription.unsubscribe();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   async function getDefaultDashboard(): Promise<string> {
     try {
@@ -107,19 +115,17 @@ function PortalInner() {
 
   // Ensure there is a recovery session before updating password
   async function ensureRecoverySession(): Promise<boolean> {
-    // 1) Do we already have a session?
     const { data: { session } } = await supabase.auth.getSession();
     if (session) return true;
 
-    // 2) Try to exchange ?code=... (PKCE flow)
+    // Try to exchange ?code=... (PKCE flow)
     const code = qs.get("code");
     if (code) {
       const { error } = await supabase.auth.exchangeCodeForSession(code);
       if (!error) return true;
     }
 
-    // 3) For hash-based links, sometimes session appears after a tick;
-    // re-check once if the URL contains tokens
+    // Hash-based links: session may attach after a tick
     if (typeof window !== "undefined" && window.location.hash.includes("access_token")) {
       const again = await supabase.auth.getSession();
       return !!again.data.session;
@@ -132,16 +138,42 @@ function PortalInner() {
   async function onSendResetLink(e: React.FormEvent) {
     e.preventDefault();
     try {
-      const origin =
-        (typeof window !== "undefined" && window.location.origin) ||
-        (process.env.NEXT_PUBLIC_APP_URL as string);
-      const redirectTo = `${origin}/portal?type=recovery`; // redirect right back to THIS page with explicit flag
+      // Remember email locally so we can offer 1-click resend if link is expired
+      if (typeof window !== "undefined") {
+        window.localStorage.setItem("recoveryEmail", email);
+      }
+
+      const origin = getOrigin();
+      const redirectTo = `${origin}/portal?type=recovery`; // explicit flag
       const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo });
       if (error) throw error;
       toast.success("Password reset link sent. Check your email.");
+      setArrivalError(null);
       setMode("signin");
     } catch (err: any) {
       toast.error(err?.message || "Could not send reset link");
+    }
+  }
+
+  // Quick resend handler for the error case
+  async function onResendLink() {
+    try {
+      const saved =
+        (typeof window !== "undefined" && window.localStorage.getItem("recoveryEmail")) || email;
+      if (!saved) {
+        setMode("forgot");
+        toast.error("Enter your email to resend the link.");
+        return;
+      }
+      const origin = getOrigin();
+      const redirectTo = `${origin}/portal?type=recovery`;
+      const { error } = await supabase.auth.resetPasswordForEmail(saved, { redirectTo });
+      if (error) throw error;
+      toast.success("A new reset link has been sent.");
+      setArrivalError(null);
+      setMode("signin");
+    } catch (err: any) {
+      toast.error(err?.message || "Could not resend link");
     }
   }
 
@@ -160,8 +192,7 @@ function PortalInner() {
       const { error } = await supabase.auth.updateUser({ password: pw1 });
       if (error) throw error;
 
-      // clean up recovery session + URL hash
-      await supabase.auth.signOut();
+      await supabase.auth.signOut(); // end temporary recovery session
       setPw1(""); setPw2(""); setPassword("");
       toast.success("Password updated. Please sign in.");
       setMode("signin");
@@ -176,27 +207,21 @@ function PortalInner() {
     e.preventDefault();
     try {
       if (mode === "signup") {
-        // Important: clear any existing session so we don’t update the current user
         await ensureSignedOut();
 
         const { data, error } = await supabase.auth.signUp({
           email,
           password,
-          // The DB trigger reads this to prefill first/last name
           options: { data: { full_name: fullName } },
         });
         if (error) throw error;
 
-        // If email confirmation is ON: session will be null.
-        // The DB trigger already created the profile row. No API calls needed.
         if (!data.session) {
           toast.success("Check your email to confirm your account, then sign in.");
           setMode("signin");
           return;
         }
 
-        // If there IS a session (e.g., dev without email confirmation),
-        // we can still upsert extra profile fields and create a starter application.
         const first = fullName.split(" ")[0] || "";
         const last = fullName.split(" ").slice(1).join(" ");
 
@@ -207,7 +232,6 @@ function PortalInner() {
           body: JSON.stringify({ email, first_name: first, last_name: last }),
         });
 
-        // Optional: create starter application immediately in this flow
         await fetch("/api/application", { method: "POST", credentials: "include" });
 
         const redirect = qs.get("redirect");
@@ -239,7 +263,23 @@ function PortalInner() {
 
       <div className="w-1/2 h-full flex items-center justify-center bg-white">
         <div className="text-center w-80">
-          <h3 className="text-2xl font-bold mb-6">{title}</h3>
+          <h3 className="text-2xl font-bold mb-2">{title}</h3>
+
+          {/* Arrival error banner with quick resend */}
+          {arrivalError && (
+            <div className="mb-4 text-sm bg-red-50 text-red-700 border border-red-200 rounded p-3">
+              {arrivalError}
+              <div className="mt-2">
+                <button
+                  onClick={onResendLink}
+                  className="underline text-red-700 hover:text-red-800"
+                  type="button"
+                >
+                  Resend reset email
+                </button>
+              </div>
+            </div>
+          )}
 
           {/* ---- MODE: Forgot (send link) ---- */}
           {mode === "forgot" && (
@@ -261,6 +301,7 @@ function PortalInner() {
                 <button
                   onClick={async () => {
                     await ensureSignedOut();
+                    setArrivalError(null);
                     setMode("signin");
                   }}
                   type="button"
@@ -282,6 +323,7 @@ function PortalInner() {
                 value={pw1}
                 onChange={(e) => setPw1(e.target.value)}
                 required
+                minLength={8}
               />
               <input
                 type="password"
@@ -290,6 +332,7 @@ function PortalInner() {
                 value={pw2}
                 onChange={(e) => setPw2(e.target.value)}
                 required
+                minLength={8}
               />
               <button className="bg-[#6B0F10] hover:cursor-pointer text-white px-4 py-2 rounded w-full hover:bg-[#951A1B] transition">
                 Update Password
@@ -337,6 +380,7 @@ function PortalInner() {
                     type="button"
                     onClick={async () => {
                       await ensureSignedOut();
+                      setArrivalError(null);
                       setMode("forgot");
                     }}
                     className="text-sm text-center hover:cursor-pointer text-blue-600 hover:underline"
@@ -357,6 +401,7 @@ function PortalInner() {
                   <button
                     onClick={async () => {
                       await ensureSignedOut(); // avoid weird state if toggling while logged in
+                      setArrivalError(null);
                       setMode("signin");
                     }}
                     className="text-blue-600 hover:underline"
@@ -370,6 +415,7 @@ function PortalInner() {
                   <button
                     onClick={async () => {
                       await ensureSignedOut();
+                      setArrivalError(null);
                       setMode("signup");
                     }}
                     className="text-blue-600 hover:underline"
