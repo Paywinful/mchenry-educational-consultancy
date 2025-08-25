@@ -46,7 +46,8 @@ function PortalInner() {
         if (error) throw error;
         setMode("setNewPassword");
         return; // stop normal bounce-to-dashboard logic
-      } catch (e) {
+      } catch (e: any) {
+        console.error(e);
         toast.error("Recovery link invalid or expired. Request a new one.");
         return;
       }
