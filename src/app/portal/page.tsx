@@ -39,7 +39,7 @@ function PortalInner() {
     const code = qs.get("code");
     const urlType = qs.get("type");
     const errDesc = qs.get("error_description");
-    const errCode = qs.get("error_code");
+    // const errCode = qs.get("error_code");
 
     // If Supabase redirected with an error, surface it
     if (errDesc) {
