@@ -34,31 +34,50 @@ function PortalInner() {
   const qs = useSearchParams();
 
   // If already authenticated, bounce to dashboard—BUT skip if coming from a recovery link
-  useEffect(() => {
-    (async () => {
-      const fromRecovery =
-        (typeof window !== "undefined" && window.location.hash.includes("type=recovery")) ||
-        qs.get("type") === "recovery";
-
-      if (fromRecovery) {
+ useEffect(() => {
+  (async () => {
+    // 1) Handle PKCE-style links: /portal?code=...&type=recovery
+    const code = qs.get("code");
+    const urlType = qs.get("type");
+    if (code && urlType === "recovery") {
+      try {
+        // Exchange ?code=... for a session, then show reset form
+        const { error } = await supabase.auth.exchangeCodeForSession(code);
+        if (error) throw error;
         setMode("setNewPassword");
+        return; // stop normal bounce-to-dashboard logic
+      } catch (e) {
+        toast.error("Recovery link invalid or expired. Request a new one.");
         return;
       }
+    }
 
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
-        const dest = await getDefaultDashboard();
-        router.replace(dest);
-      }
-    })();
+    // 2) Handle hash-style links: /portal#access_token=...&type=recovery
+    const fromRecovery =
+      (typeof window !== "undefined" && window.location.hash.includes("type=recovery")) ||
+      qs.get("type") === "recovery";
 
-    // Listen for Supabase recovery event (when the reset link redirects here)
-    const { data: sub } = supabase.auth.onAuthStateChange((event) => {
-      if (event === "PASSWORD_RECOVERY") setMode("setNewPassword");
-    });
-    return () => sub.subscription.unsubscribe();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    if (fromRecovery) {
+      setMode("setNewPassword");
+      return;
+    }
+
+    // Normal "already signed in?" redirect
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session) {
+      const dest = await getDefaultDashboard();
+      router.replace(dest);
+    }
+  })();
+
+  // Keep your existing listener — it still helps in hash-based flows
+  const { data: sub } = supabase.auth.onAuthStateChange((event) => {
+    if (event === "PASSWORD_RECOVERY") setMode("setNewPassword");
+  });
+  return () => sub.subscription.unsubscribe();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+}, []);
+
 
   async function getDefaultDashboard(): Promise<string> {
     try {
