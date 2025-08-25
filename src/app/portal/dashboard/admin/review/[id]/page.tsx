@@ -5,6 +5,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Download, CheckCircle, CreditCard } from "lucide-react";
+import { toast } from "@/components/toast";
 
 export default function AdminReviewApp() {
   const { id } = useParams<{ id: string }>();
@@ -48,6 +49,8 @@ export default function AdminReviewApp() {
     await fetch(`/api/admin/application/${application.id}/accept`, { method: "POST" });
     await load();
     setBusy(false);
+    toast.success("Application Accepted")
+    router.back()
   }
 
   return (

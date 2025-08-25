@@ -205,15 +205,15 @@ export function AcademicBackgroundForm({
                   </div>
                   <div className="space-y-2">
                     <Label>GPA</Label>
-                    <Input value={education.gpa} onChange={(e) => updateEducation(education.clientId, "gpa", e.target.value)} placeholder="e.g., 3.8" />
+                    <Input type="number" value={education.gpa} onChange={(e) => updateEducation(education.clientId, "gpa", e.target.value)} placeholder="e.g., 3.8" />
                   </div>
                   <div className="space-y-2">
                     <Label>Start Year *</Label>
-                    <Input value={education.startYear} onChange={(e) => updateEducation(education.clientId, "startYear", e.target.value)} placeholder="e.g., 2018" required />
+                    <Input type="number" value={education.startYear} onChange={(e) => updateEducation(education.clientId, "startYear", e.target.value)} placeholder="e.g., 2018" required />
                   </div>
                   <div className="space-y-2">
                     <Label>End Year *</Label>
-                    <Input value={education.endYear} onChange={(e) => updateEducation(education.clientId, "endYear", e.target.value)} placeholder="e.g., 2022" required />
+                    <Input type="number" value={education.endYear} onChange={(e) => updateEducation(education.clientId, "endYear", e.target.value)} placeholder="e.g., 2022" required />
                   </div>
                 </div>
               </Card>
@@ -233,7 +233,7 @@ export function AcademicBackgroundForm({
               ].map(([key, label, placeholder]) => (
                 <div key={key} className="space-y-2">
                   <Label htmlFor={key}>{label}</Label>
-                  <Input id={key} value={(testScores as any)[key]} onChange={(e) => updateTestScore(key, e.target.value)} placeholder={placeholder as string} />
+                  <Input type="number" id={key} value={(testScores as any)[key]} onChange={(e) => updateTestScore(key, e.target.value)} placeholder={placeholder as string} />
                 </div>
               ))}
             </div>

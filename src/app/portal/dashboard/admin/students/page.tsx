@@ -166,7 +166,7 @@ export default function AdminStudentsPage() {
         </div>
         <button
           onClick={load}
-          className="inline-flex items-center px-3 py-2 rounded border bg-white hover:bg-gray-50"
+          className="inline-flex items-center px-3 py-2 rounded border bg-white hover:cursor-pointer hover:bg-gray-50"
         >
           <RefreshCcw className="w-4 h-4 mr-2" />
           Refresh

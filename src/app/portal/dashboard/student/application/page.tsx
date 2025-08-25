@@ -123,33 +123,33 @@ export default function ApplicationPage() {
   }, []);
 
   // inside component:
-const deleteApplication = useCallback(async (id: string) => {
-  const yes = window.confirm("Delete this application? This will also remove any payments tied to it.");
-  if (!yes) return;
+  const deleteApplication = useCallback(async (id: string) => {
+    const yes = window.confirm("Delete this application? This will also remove any payments tied to it.");
+    if (!yes) return;
 
-  try {
-    const res = await fetch(`/api/application/${id}`, { method: "DELETE" });
-    const ct = res.headers.get("content-type") || "";
-    const json = ct.includes("application/json") ? await res.json() : { error: await res.text() };
-    if (!res.ok) throw new Error(json?.error || `Delete failed (HTTP ${res.status})`);
+    try {
+      const res = await fetch(`/api/application/${id}`, { method: "DELETE" });
+      const ct = res.headers.get("content-type") || "";
+      const json = ct.includes("application/json") ? await res.json() : { error: await res.text() };
+      if (!res.ok) throw new Error(json?.error || `Delete failed (HTTP ${res.status})`);
 
-    // remove from local list
-    setApps((prev) => prev.filter((a) => a.id !== id));
+      // remove from local list
+      setApps((prev) => prev.filter((a) => a.id !== id));
 
-    // clear selection if it was this one
-    setSelectedId((cur) => (cur === id ? null : cur));
+      // clear selection if it was this one
+      setSelectedId((cur) => (cur === id ? null : cur));
 
-    // hide wizard if none left
-    setShowWizard((prev) => {
-      const left = apps.filter((a) => a.id !== id).length;
-      return left > 0 ? prev : false;
-    });
+      // hide wizard if none left
+      setShowWizard((prev) => {
+        const left = apps.filter((a) => a.id !== id).length;
+        return left > 0 ? prev : false;
+      });
 
-    toast.success("Application deleted");
-  } catch (e: any) {
-    toast.error(e?.message || "Could not delete application");
-  }
-}, [apps]);
+      toast.success("Application deleted");
+    } catch (e: any) {
+      toast.error(e?.message || "Could not delete application");
+    }
+  }, [apps]);
 
   useEffect(() => { loadApps(); }, [loadApps]);
   useEffect(() => { if (selectedId) loadDetails(selectedId); }, [selectedId, loadDetails]);
@@ -255,6 +255,8 @@ const deleteApplication = useCallback(async (id: string) => {
               setCurrentStep(3);
               uncompleteStep(4);
             }}
+            onSubmitDone={() => setShowWizard(false)}
+            
           />
         );
       default:
@@ -285,41 +287,40 @@ const deleteApplication = useCallback(async (id: string) => {
           ) : (
             <div className="space-y-2">
               {apps.map((a) => {
-  const active = selectedId === a.id;
-  return (
-    <div key={a.id} className="flex items-stretch gap-2">
-      <button
-        className={`flex-1 text-left p-3 rounded border transition ${
-          active ? "border-[#6B0F10] bg-blue-50" : "border-gray-200 hover:bg-gray-50"
-        }`}
-        onClick={() => {
-          setSelectedId(a.id);
-          setShowWizard(true);
-          toast.info("Opened application");
-        }}
-      >
-        <div className="flex items-center justify-between">
-          <div className="font-semibold truncate">
-            {a.title?.trim() || `Application • ${fmt(a.created_at)}`}
-          </div>
-          <Badge>{a.status || "in_progress"}</Badge>
-        </div>
-        <div className="text-xs text-gray-500 mt-1">
-          Updated {fmt(a.updated_at)}
-        </div>
-      </button>
+                const active = selectedId === a.id;
+                return (
+                  <div key={a.id} className="flex items-stretch gap-2">
+                    <button
+                      className={`flex-1 text-left p-3 rounded border transition ${active ? "border-[#6B0F10] bg-blue-50" : "border-gray-200 hover:bg-gray-50"
+                        }`}
+                      onClick={() => {
+                        setSelectedId(a.id);
+                        setShowWizard(true);
+                        toast.info("Opened application");
+                      }}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="font-semibold truncate">
+                          {a.title?.trim() || `Application • ${fmt(a.created_at)}`}
+                        </div>
+                        <Badge>{a.status || "in_progress"}</Badge>
+                      </div>
+                      <div className="text-xs text-gray-500 mt-1">
+                        Updated {fmt(a.updated_at)}
+                      </div>
+                    </button>
 
-      <button
-        aria-label="Delete application"
-        className="px-3 py-2 rounded border bg-white text-red-600 hover:bg-red-50"
-        onClick={() => deleteApplication(a.id)}
-        title="Delete"
-      >
-        <Trash2 className="h-4 w-4" />
-      </button>
-    </div>
-  );
-})}
+                    <button
+                      aria-label="Delete application"
+                      className="px-3 py-2 rounded border bg-white text-red-600 hover:bg-red-50"
+                      onClick={() => deleteApplication(a.id)}
+                      title="Delete"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </div>
+                );
+              })}
 
             </div>
           )}
@@ -371,13 +372,12 @@ const deleteApplication = useCallback(async (id: string) => {
               return (
                 <Card
                   key={step.id}
-                  className={`cursor-pointer transition-colors select-none ${
-                    active
+                  className={`cursor-pointer transition-colors select-none ${active
                       ? "ring-2 ring-[#6B0F10] bg-blue-50"
                       : done
-                      ? "bg-green-50"
-                      : "hover:bg-gray-50"
-                  }`}
+                        ? "bg-green-50"
+                        : "hover:bg-gray-50"
+                    }`}
                   role="button"
                   tabIndex={0}
                   onClick={() => setCurrentStep(step.id)}
@@ -388,13 +388,12 @@ const deleteApplication = useCallback(async (id: string) => {
                   <CardContent className="p-4">
                     <div className="flex items-center gap-3">
                       <div
-                        className={`p-2 rounded-full ${
-                          done
+                        className={`p-2 rounded-full ${done
                             ? "bg-green-100 text-green-600"
                             : active
-                            ? "bg-blue-100 text-[#6B0F10]"
-                            : "bg-gray-100 text-gray-400"
-                        }`}
+                              ? "bg-blue-100 text-[#6B0F10]"
+                              : "bg-gray-100 text-gray-400"
+                          }`}
                         aria-label={done ? "Completed" : "Incomplete"}
                       >
                         {done ? <CheckCircle className="h-4 w-4" /> : <step.icon className="h-4 w-4" />}

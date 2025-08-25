@@ -39,6 +39,7 @@ interface DocumentUploadFormProps {
   applicationId: string;
   initialDocuments: any[];
   onPrev: () => void;
+  onSubmitDone: () => void;
 }
 
 interface DocumentUI {
@@ -52,7 +53,7 @@ interface DocumentUI {
   storage_path?: string;
 }
 
-export function DocumentUploadForm({ applicationId, initialDocuments, onPrev }: DocumentUploadFormProps) {
+export function DocumentUploadForm({ applicationId, initialDocuments, onPrev, onSubmitDone }: DocumentUploadFormProps) {
   const supabase = supabaseClient();
 
   const [documents, setDocuments] = useState<DocumentUI[]>(() => {
@@ -158,7 +159,13 @@ export function DocumentUploadForm({ applicationId, initialDocuments, onPrev }: 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Document Upload</CardTitle>
+        <div className="flex justify-between">
+          <CardTitle>Document Upload</CardTitle>
+          <p className="text-lg text-gray-600 hover:cursor-pointer" onClick={()=>{
+            toast.info("Form Closed")
+            onSubmitDone();
+          }}>X</p>
+        </div>
         <CardDescription>Upload all required documents to complete your application</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6 mx-6">
@@ -235,10 +242,11 @@ export function DocumentUploadForm({ applicationId, initialDocuments, onPrev }: 
         </Card>
 
         <div className="flex justify-between my-2">
-          <Button type="button" onClick={onPrev} className="bg-white border text-blue-600 hover:bg-blue-50">Previous</Button>
+          <Button type="button" onClick={onPrev} className="hover:cursor-pointer border text-blue-600 hover:bg-blue-50">Previous</Button>
           <Button onClick={()=> {
               toast.success("Application Submitted")
-            }} className="bg-green-600 hover:bg-green-700">
+              onSubmitDone();
+            }} className="bg-green-600 hover:cursor-pointer hover:bg-green-400">
             <CheckCircle  className="h-4 w-4 mr-2" /> Submit Application
           </Button>
         </div>

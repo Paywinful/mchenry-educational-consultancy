@@ -6,6 +6,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { supabaseClient } from "@/lib/supabase/client";
 
+
 interface AppHeaderProps {
   collapsed: boolean;
   setCollapsed: React.Dispatch<React.SetStateAction<boolean>>;
@@ -18,6 +19,7 @@ export default function AppHeader({ collapsed, setCollapsed }: AppHeaderProps) {
   const [titleText, setTitleText] = useState("Welcome");
   const [avatarSrc, setAvatarSrc] = useState<string>("/placeholder.svg?height=40&width=40");
   const [notificationCount, setNotificationCount] = useState<number>(0);
+  const [adminCheck, setadminCheck] = useState(false)
 
   const today = useMemo(() => new Date(), []);
   const dateString = useMemo(
@@ -30,6 +32,7 @@ export default function AppHeader({ collapsed, setCollapsed }: AppHeaderProps) {
       }),
     [today]
   );
+  
 
   // Load greeting + avatar (public avatars bucket or signed docs)
   useEffect(() => {
@@ -44,6 +47,7 @@ export default function AppHeader({ collapsed, setCollapsed }: AppHeaderProps) {
         const res = await fetch("/api/profile", { cache: "no-store" });
         if (!res.ok) return;
         const { profile } = await res.json();
+        setadminCheck(profile.is_admin)
         if (cancelled) return;
 
         // Greeting
@@ -175,7 +179,12 @@ export default function AppHeader({ collapsed, setCollapsed }: AppHeaderProps) {
           <button
             className="relative p-2 rounded-full hover:bg-gray-100"
             aria-label="Notifications"
-            onClick={() => router.push("/portal/dashboard/student/notifications")}
+            onClick={() => {
+              if(adminCheck){
+                router.push("/portal/dashboard/admin/notifications")
+              }else{
+                router.push("/portal/dashboard/student/notifications")
+            }}}
           >
             <Bell className="w-6 h-6 text-gray-700 hover:cursor-pointer" />
             {/* Badge */}

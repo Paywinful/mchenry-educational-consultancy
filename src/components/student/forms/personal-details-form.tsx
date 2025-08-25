@@ -3,7 +3,7 @@
 "use client";
 
 import type React from "react";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 
 /** ---------- UI shims (same styles you already use) ---------- */
 const Card = ({ children, className = "", ...props }: React.HTMLAttributes<HTMLDivElement>) => (
@@ -40,6 +40,15 @@ interface PersonalDetailsFormProps {
   onNext: () => void;
 }
 
+type NationalityEntry = {
+  label: string;          // e.g. "Ghanaian"
+  value: string | null;   // ISO alpha-2 code like "GH" or null if ambiguous
+};
+
+function slugify(label: string) {
+  return label.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
+}
+
 export function PersonalDetailsForm({ onNext }: PersonalDetailsFormProps) {
   const [loading, setLoading] = useState(true);
   const [formData, setFormData] = useState({
@@ -47,6 +56,38 @@ export function PersonalDetailsForm({ onNext }: PersonalDetailsFormProps) {
     nationality: "", address: "", emergencyContact: "",
   });
   const [dateOfBirth, setDateOfBirth] = useState<string>("");
+
+  // ---- Load nationalities JSON from /public ----
+  const [nationalities, setNationalities] = useState<NationalityEntry[]>([]);
+  const [natsLoading, setNatsLoading] = useState(true);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        // Place your JSON at: public/nationalities_with_codes.json
+        const res = await fetch("/nationalities_with_codes.json", { cache: "force-cache" });
+        if (!res.ok) throw new Error("nationalities JSON not found");
+        const data = (await res.json()) as NationalityEntry[];
+        setNationalities(data);
+      } catch {
+        // Fallback minimal list if JSON missing (keeps UI usable)
+        setNationalities([
+          { label: "Ghanaian", value: "GH" },
+          { label: "Nigerian", value: "NG" },
+          { label: "Kenyan", value: "KE" },
+          { label: "South African", value: "ZA" },
+          { label: "American", value: "US" },
+          { label: "British", value: "GB" },
+          { label: "Canadian", value: "CA" },
+          { label: "French", value: "FR" },
+          { label: "German", value: "DE" },
+          { label: "Australian", value: "AU" },
+        ]);
+      } finally {
+        setNatsLoading(false);
+      }
+    })();
+  }, []);
 
   // Prefill from /api/profile
   useEffect(() => {
@@ -102,6 +143,14 @@ export function PersonalDetailsForm({ onNext }: PersonalDetailsFormProps) {
     }
   }, [formData, dateOfBirth, onNext]);
 
+  // Build safe select options (prefer ISO code; fall back to label slug)
+  const natOptions = useMemo(() => {
+    return nationalities.map((n) => {
+      const value = n.value ?? `label:${slugify(n.label)}`;
+      return { value, label: n.label };
+    });
+  }, [nationalities]);
+
   return (
     <Card>
       <CardHeader>
@@ -116,7 +165,7 @@ export function PersonalDetailsForm({ onNext }: PersonalDetailsFormProps) {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="firstName">First Name *</Label>
-                <Input id="firstName" value={formData.firstName} onChange={(e) => handleInputChange("firstName", e.target.value)} required />
+                <Input type="text" id="firstName" value={formData.firstName} onChange={(e) => handleInputChange("firstName", e.target.value)} required />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="lastName">Last Name *</Label>
@@ -131,7 +180,7 @@ export function PersonalDetailsForm({ onNext }: PersonalDetailsFormProps) {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="phone">Phone Number *</Label>
-                <Input id="phone" value={formData.phone} onChange={(e) => handleInputChange("phone", e.target.value)} required />
+                <Input type="number" id="phone" value={formData.phone} onChange={(e) => handleInputChange("phone", e.target.value)} required />
               </div>
             </div>
 
@@ -142,14 +191,16 @@ export function PersonalDetailsForm({ onNext }: PersonalDetailsFormProps) {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="nationality">Nationality *</Label>
-                <Select value={formData.nationality} onValueChange={(v) => handleInputChange("nationality", v)}>
-                  <SelectValue placeholder="Select nationality" />
-                  <SelectItem value="US">United States</SelectItem>
-                  <SelectItem value="CA">Canada</SelectItem>
-                  <SelectItem value="UK">United Kingdom</SelectItem>
-                  <SelectItem value="AU">Australia</SelectItem>
-                  <SelectItem value="DE">Germany</SelectItem>
-                  <SelectItem value="FR">France</SelectItem>
+                <Select
+                  value={formData.nationality}
+                  onValueChange={(v) => handleInputChange("nationality", v)}
+                >
+                  <SelectValue placeholder={natsLoading ? "Loading nationalities…" : "Select nationality"} />
+                  {natOptions.map((opt) => (
+                    <SelectItem key={opt.label} value={opt.label}>
+                      {opt.label}
+                    </SelectItem>
+                  ))}
                   <SelectItem value="other">Other</SelectItem>
                 </Select>
               </div>
