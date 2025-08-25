@@ -35,45 +35,58 @@ function PortalInner() {
 
   // If already authenticated, bounce to dashboard—BUT skip if coming from a recovery link
   useEffect(() => {
-    (async () => {
-      // --- PKCE-style link: /portal?code=...&type=recovery ---
-      const code = qs.get("code");
-      const urlType = qs.get("type");
-      if (code && urlType === "recovery") {
-        try {
-          const { error } = await supabase.auth.exchangeCodeForSession(code);
-          if (error) throw error;
-          setMode("setNewPassword"); // show the form
-          return;                    // stop the dashboard bounce
-        } catch {
-          toast.error("Recovery link invalid or expired. Request a new one.");
-          return;
-        }
-      }
+  (async () => {
+    const code = qs.get("code");
+    const urlType = qs.get("type");
+    const errDesc = qs.get("error_description");
+    const errCode = qs.get("error_code");
 
-      // --- Hash-style link: /portal#...type=recovery ---
-      const fromHash =
-        typeof window !== "undefined" && window.location.hash.includes("type=recovery");
-      if (fromHash || urlType === "recovery") {
+    // If Supabase redirected with an error, surface it
+    if (errDesc) {
+      toast.error(errDesc); // e.g. "Session expired", "Session not found", etc.
+      // If it was expired/used, offer to resend right away by flipping mode:
+      setMode("forgot");
+      return;
+    }
+
+    // --- PKCE-style link: /portal?code=...&type=recovery ---
+    if (code && urlType === "recovery") {
+      try {
+        const { error } = await supabase.auth.exchangeCodeForSession(code);
+        if (error) throw error;
         setMode("setNewPassword");
+        return; // don't bounce to dashboard
+      } catch {
+        // If exchange fails (expired/used), push user to request a new link
+        toast.error("Your recovery link is invalid or expired. Please request a new one.");
+        setMode("forgot");
         return;
       }
+    }
 
-      // --- Normal path: only now bounce signed-in users ---
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
-        const dest = await getDefaultDashboard();
-        router.replace(dest);
-      }
-    })();
+    // --- Hash-style link: /portal#...type=recovery ---
+    const fromHash =
+      typeof window !== "undefined" && window.location.hash.includes("type=recovery");
+    if (fromHash || urlType === "recovery") {
+      setMode("setNewPassword");
+      return;
+    }
 
-    // Keep the listener; some environments emit PASSWORD_RECOVERY here
-    const { data: sub } = supabase.auth.onAuthStateChange((event) => {
-      if (event === "PASSWORD_RECOVERY") setMode("setNewPassword");
-    });
-    return () => sub.subscription.unsubscribe();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    // --- Normal path (no recovery in URL) ---
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session) {
+      const dest = await getDefaultDashboard();
+      router.replace(dest);
+    }
+  })();
+
+  const { data: sub } = supabase.auth.onAuthStateChange((event) => {
+    if (event === "PASSWORD_RECOVERY") setMode("setNewPassword");
+  });
+  return () => sub.subscription.unsubscribe();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+}, []);
+
 
   async function getDefaultDashboard(): Promise<string> {
     try {
