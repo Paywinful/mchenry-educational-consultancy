@@ -43,6 +43,16 @@ function PortalInner() {
     );
   }
 
+  useEffect(() => {
+  const errDesc = qs.get("error_description");
+  const errCode = qs.get("error_code");
+  const code = qs.get("code");
+  if (errDesc || errCode || code) {
+    console.log({ errDesc, errCode, code, fullUrl: window.location.href });
+  }
+}, [qs]);
+
+
   // If already authenticated, bounce to dashboard—BUT skip if coming from a recovery link
   useEffect(() => {
     (async () => {
