@@ -160,6 +160,7 @@ function PortalInner() {
     e.preventDefault();
     try {
       setBusy(true);
+      await supabase.auth.signOut();
 
       // Remember email for token_hash verification path
       if (typeof window !== "undefined") {
