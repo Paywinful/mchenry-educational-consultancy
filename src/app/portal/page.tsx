@@ -84,6 +84,7 @@ function PortalInner() {
             setMode("forgot");
             return;
           }
+          
           const { error } = await supabase.auth.verifyOtp({
             type: "magiclink",
             token_hash: tokenHash,
