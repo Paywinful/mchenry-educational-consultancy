@@ -115,7 +115,7 @@ function PortalInner() {
           setMode("setNewPassword");
           return; // ⛔ do not redirect
         } catch {
-          setArrivalError("Magic link is invalid or expired. Please request a new one.");
+          setArrivalError("Link is invalid or expired. Please request a new one.");
           setMode("forgot");
           return;
         }
@@ -218,11 +218,11 @@ function PortalInner() {
       });
       if (error) throw error;
 
-      toast.success("Magic sign-in link sent. Check your email.");
+      toast.success("Reset password link sent. Check your email.");
       setArrivalError(null);
       setMode("signin");
     } catch (err: any) {
-      toast.error(err?.message || "Could not send magic link");
+      toast.error(err?.message || "Could not send reset link");
     } finally {
       setBusy(false);
     }
@@ -266,54 +266,61 @@ function PortalInner() {
 
   // ---- Sign up / Sign in (unchanged) ----
   async function onSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    try {
-      setBusy(true);
+  e.preventDefault();
+  try {
+    setBusy(true);
 
-      if (mode === "signup") {
-        await ensureSignedOut();
-
-        const { data, error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: { data: { full_name: fullName } },
-        });
-        if (error) throw error;
-
-        if (!data.session) {
-          toast.success("Check your email to confirm your account, then sign in.");
-          setMode("signin");
-          return;
-        }
-
-        const first = fullName.split(" ")[0] || "";
-        const last = fullName.split(" ").slice(1).join(" ");
-
-        await fetch("/api/profile", {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-          body: JSON.stringify({ email, first_name: first, last_name: last }),
-        });
-
-        await fetch("/api/application", { method: "POST", credentials: "include" });
-
-        const redirect = qs.get("redirect");
-        router.push(redirect || (await getDefaultDashboard()));
-      } else {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) throw error;
-
-        const redirect = qs.get("redirect");
-        toast.success("Login successfully");
-        router.push(redirect || (await getDefaultDashboard()));
+    if (mode === "signup") {
+      // 🔒 Password length validation
+      if (password.length < 8) {
+        toast.error("Password must be at least 8 characters long.");
+        return;
       }
-    } catch (err: any) {
-      toast.error(err?.message || "Authentication error");
-    } finally {
-      setBusy(false);
+
+      await ensureSignedOut();
+
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: { data: { full_name: fullName } },
+      });
+      if (error) throw error;
+
+      if (!data.session) {
+        toast.success("Check your email to confirm your account, then sign in.");
+        setMode("signin");
+        return;
+      }
+
+      const first = fullName.split(" ")[0] || "";
+      const last = fullName.split(" ").slice(1).join(" ");
+
+      await fetch("/api/profile", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ email, first_name: first, last_name: last }),
+      });
+
+      await fetch("/api/application", { method: "POST", credentials: "include" });
+
+      const redirect = qs.get("redirect");
+      router.push(redirect || (await getDefaultDashboard()));
+    } else {
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) throw error;
+
+      const redirect = qs.get("redirect");
+      toast.success("Login successfully");
+      router.push(redirect || (await getDefaultDashboard()));
     }
+  } catch (err: any) {
+    toast.error(err?.message || "Authentication error");
+  } finally {
+    setBusy(false);
   }
+}
+
 
   const title = useMemo(() => {
     if (mode === "forgot") return "Reset Password";
@@ -352,7 +359,7 @@ function PortalInner() {
                 disabled={busy}
                 className="bg-[#6B0F10] disabled:opacity-60 text-white px-4 py-2 rounded w-full hover:bg-[#951A1B] transition"
               >
-                {busy ? "Sending…" : "Send Magic Sign-In Link"}
+                {busy ? "Sending…" : "Send Reset Link"}
               </button>
 
               <p className="mt-6 text-sm text-gray-600">
@@ -401,7 +408,7 @@ function PortalInner() {
               </button>
               {cameFromMagic && (
                 <p className="text-xs text-gray-500">
-                  You’re signed in via magic link. Updating your password will keep you signed in.
+                  You’re signed in via reset link. Updating your password will keep you signed in.
                 </p>
               )}
             </form>
