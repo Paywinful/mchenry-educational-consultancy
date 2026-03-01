@@ -1,270 +1,215 @@
-"use client";
-
-import Image from "next/image";
 import {
-  School,
-  Quote,
-  Shield,
   BookOpenCheck,
-  PencilRuler,
+  Compass,
+  GraduationCap,
   Lightbulb,
+  Shield,
+  Sparkles,
   UsersRound,
 } from "lucide-react";
+import Image from "next/image";
+
+const teamMembers = [
+  {
+    id: 1,
+    image: "/henry.png",
+    name: "Henry Amankwah",
+    role: "Founder & Lead Consultant",
+    text: "Education is the passport to opportunity, and every student deserves a fair chance to thrive.",
+  },
+  {
+    id: 2,
+    image: "/member1.jpg",
+    name: "Daniel Mensah",
+    role: "CEO",
+    text: "The right guidance at the right time can transform academic ambition into real outcomes.",
+  },
+  {
+    id: 3,
+    image: "/member2.jpg",
+    name: "Demarsha Sweety Mensah",
+    role: "Administrator",
+    text: "When knowledge meets determination, nothing can stand in the way of your dreams.",
+  },
+];
+
+const coreValues = [
+  {
+    title: "Integrity",
+    desc: "We offer transparent advice with ethical standards and clear communication.",
+    icon: Shield,
+    tone: "bg-[#6B0F10] text-[#FFFBD6]",
+  },
+  {
+    title: "Excellence",
+    desc: "We maintain a high bar for advisory quality and student experience.",
+    icon: BookOpenCheck,
+    tone: "bg-[#FFFBD6] text-[#6B0F10]",
+  },
+  {
+    title: "Innovation",
+    desc: "We adapt quickly to global admissions trends and policy updates.",
+    icon: Lightbulb,
+    tone: "bg-[#6B0F10] text-[#FFFBD6]",
+  },
+  {
+    title: "Student Focus",
+    desc: "Every recommendation is tailored to your goals, background, and budget.",
+    icon: UsersRound,
+    tone: "bg-[#FFFBD6] text-[#6B0F10]",
+  },
+];
 
 export default function About() {
-  const teamMembers = [
-    {
-      id: 1,
-      image: "/members1.jpg",
-      name: "Henry Amankwah",
-      role: "Founder & CEO",
-      text: "Education is the passport to opportunity and every student deserves a chance to succeed.",
-
-    },
-    {
-      id: 2,
-      image: "/members2.jpg",
-      name: "Demarsha Sweety Mensah",
-      role: "Administrator",
-      text: "Success begins with courage, guidance, and the belief that your future can be greater than your past.",
-    },
-    {
-      id: 3,
-      image: "/members3.jpg",
-      name: "Daniel Mensah",
-      role: "Coordinator",
-      text: "When knowledge meets determination, nothing can stand in the way of your dreams.",
-    },
-  ];
-
   return (
-    <div className="overflow-x-hidden">
-      {/* Hero Section */}
-      <div className="relative w-full h-72 md:h-96">
-        <Image
-          src="/about.png"
-          alt="Hero Section"
-          fill
-          className="object-cover z-0"
-          priority
-        />
-        <div className="absolute inset-0 bg-black/80 z-10" />
-        <div className="absolute inset-0 z-20 flex items-center justify-center px-4 md:px-8 text-center">
-          <div className="text-white max-w-2xl">
-            <h1 className="text-3xl md:text-5xl font-bold mb-4">Who We Are?</h1>
-            <p className="text-sm md:text-md mb-8 md:mb-12 font-thin">
-              McHenry Educational Consultancy in Ghana is ready to collaborate
-              with all international bodies such as UNESCO, UNICEF, the UN, WHO,
-              etc. and all countries to support children in war-torn areas,
-              enabling them to study in Ghana through sponsorships and
-              scholarships.
+    <div className="overflow-x-hidden bg-white">
+      <section className="relative isolate min-h-[360px]">
+        <Image src="/students.jpg" alt="Students in an educational setting" fill className="object-cover" priority />
+        <div className="absolute inset-0 bg-black/70" />
+        <div className="relative z-10 mx-auto flex min-h-[360px] w-full max-w-7xl items-center px-4 py-16 text-white sm:px-6 lg:px-8">
+          <div className="max-w-3xl">
+            <p className="mb-4 inline-flex rounded-full border border-white/30 bg-white/10 px-4 py-1 text-xs font-medium uppercase tracking-[0.2em] text-[#FFFBD6]">
+              About McHenry
+            </p>
+            <h1 className="text-4xl font-semibold leading-tight md:text-5xl">Built on Trust, Guidance, and Global Access</h1>
+            <p className="mt-5 text-base leading-8 text-slate-200 md:text-lg">
+              We work with students, families, and institutions to connect international learners to quality education in
+              Ghana with transparent advisory, responsible partnerships, and practical support.
             </p>
           </div>
         </div>
-      </div>
+      </section>
 
-      {/* Our Story */}
-      <div className="w-full px-4 md:px-8 py-8 bg-[#F3F3F3]">
-        <h2 className="text-center text-2xl md:text-3xl font-bold mb-8 md:mb-12">
-          Our Story
-        </h2>
-        <div className="flex flex-col md:flex-row items-center justify-center gap-8">
-          <p className="w-full md:w-1/2 text-xs md:text-sm leading-relaxed">
-            <span className="float-left text-6xl font-bold leading-none mr-2">
-              F
-            </span>
-            ounded with a vision to bridge the gap between international
-            students and Ghana&apos;s prestigious educational institutions,
-            McHenry Educational Consultancy was born from the understanding that
-            quality education should be accessible to all, regardless of
-            geographical boundaries.
-            <br />
-            <br />
-            Our journey began when we recognized the untapped potential of
-            Ghana&apos;s higher education sector and the growing demand from
-            international students seeking authentic, affordable, and quality
-            education in a culturally rich environment.
-          </p>
-
-          <div className="w-full md:w-1/3 bg-[#FFFBD6] shadow-xl rounded-full p-6 md:p-10 flex flex-col items-center space-y-4 text-center">
-            <p className="text-xl md:text-2xl font-extrabold">Our Goal</p>
-            <p className="text-sm md:text-md">
-              Making education, knowledge & technology globally common &
-              accessible.
+      <section className="section-shell bg-[#f7f8fa]">
+        <div className="mx-auto grid w-full max-w-7xl gap-10 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
+          <article>
+            <h2 className="section-heading">Our Story</h2>
+            <p className="section-subheading">
+              McHenry Educational Consultancy was founded to close the information gap between international students
+              and credible institutions in Ghana. We combine local insight with global admissions standards to deliver
+              a dependable pathway from inquiry to enrollment.
             </p>
-          </div>
+            <p className="mt-6 text-sm leading-7 text-slate-600 md:text-base">
+              From academic counseling and institution selection to application preparation and pre-departure support,
+              our team focuses on outcomes, compliance, and student confidence at every stage.
+            </p>
+          </article>
+
+          <aside className="card-surface bg-[#FFFBD6] p-8">
+            <h3 className="text-2xl font-semibold text-[#6B0F10]">Our Goal</h3>
+            <p className="mt-4 text-sm leading-7 text-slate-700 md:text-base">
+              Make quality education, knowledge, and opportunity accessible across borders through disciplined guidance
+              and partnerships that prioritize student success.
+            </p>
+          </aside>
         </div>
-      </div>
+      </section>
 
-      {/* Mission & Vision */}
-      <div className="w-full px-4 md:px-8 py-12 md:py-20 bg-white">
-        <div className="flex flex-col md:flex-row items-center justify-center gap-8">
-          <div className="w-full md:w-1/2 bg-white shadow-xl rounded-lg p-6 md:p-10 flex flex-col items-center text-center space-y-4">
-            <div className="w-14 h-14 rounded-full bg-[#6B0F10] flex items-center justify-center">
-              <School color="#fff" size={35} />
-            </div>
-            <p className="text-md text-[#6B0F10] font-extrabold">Our Mission</p>
-            <p className="text-xs md:text-sm text-gray-700">
-              Bridge global educational opportunities with African potential by
-              promoting access to high-quality tertiary education across
-              borders. Dedicated to guiding students, families, and institutions
-              through trusted advisory services, university placements, academic
-              counseling, and capacity-building initiatives that foster personal
-              growth, global citizenship, and national development.
-            </p>
-          </div>
-
-          <div className="w-full md:w-1/2 bg-white shadow-xl rounded-lg p-6 md:p-10 flex flex-col items-center text-center space-y-4">
-            <div className="w-14 h-14 rounded-full bg-[#FFFBD6] flex items-center justify-center">
-              <School color="#6B0F10" size={35} />
-            </div>
-            <p className="text-md text-[#6B0F10] font-extrabold">Our Vision</p>
-            <p className="text-xs md:text-sm text-gray-700">
-              Become Africa’s leading educational consultancy firm, empowering
-              future leaders through world-class partnerships, innovative
-              guidance, and seamless access to transformative international
-              higher education opportunities.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* Core Values */}
-      <div className="w-full px-4 md:px-20 py-12 bg-[#F3F3F3]">
-        <h2 className="text-center text-2xl md:text-3xl font-extrabold mb-12">
-          Our <span className="text-[#6B0F10]">Core</span> Values
-        </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8">
-          {[
-            {
-              icon: <Shield color="#FFFBD6" size={50} />,
-              bg: "#6B0F10",
-              title: "Integrity",
-              desc: "Upholding the highest ethical standards.",
-            },
-            {
-              icon: <BookOpenCheck color="#6B0F10" size={50} />,
-              bg: "#FFFBD6",
-              title: "Excellence",
-              desc: "Delivering unmatched quality.",
-            },
-            {
-              icon: <PencilRuler color="#FFFBD6" size={50} />,
-              bg: "#6B0F10",
-              title: "Discipline",
-              desc: "Accountability, respect, professionalism.",
-            },
-            {
-              icon: <Lightbulb color="#6B0F10" size={50} />,
-              bg: "#FFFBD6",
-              title: "Innovation",
-              desc: "Encouraging creative solutions.",
-            },
-            {
-              icon: <UsersRound color="#FFFBD6" size={50} />,
-              bg: "#6B0F10",
-              title: "Customer-Centricity",
-              desc: "Client needs at the heart.",
-            },
-          ].map((val, i) => (
-            <div key={i} className="flex flex-col items-center text-center">
-              <div
-                className="w-20 h-20 rounded-full flex items-center justify-center mb-4"
-                style={{ backgroundColor: val.bg }}
-              >
-                {val.icon}
+      <section className="section-shell">
+        <div className="mx-auto w-full max-w-7xl">
+          <div className="grid gap-6 md:grid-cols-2">
+            <article className="card-surface p-8">
+              <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-full bg-[#6B0F10] text-white">
+                <GraduationCap size={20} />
               </div>
-              <p className="text-sm font-extrabold">{val.title}</p>
-              <p className="text-xs">{val.desc}</p>
-            </div>
-          ))}
-        </div>
-      </div>
+              <h2 className="text-2xl font-semibold text-slate-900">Our Mission</h2>
+              <p className="mt-4 text-sm leading-7 text-slate-600 md:text-base">
+                To guide students and families through trusted admissions advisory, institution placement, and practical
+                support services that unlock life-changing educational opportunities.
+              </p>
+            </article>
 
-      {/* Meet Our Team (UPDATED) */}
-      <div className="w-full py-12 px-4 md:px-10">
-        <h2 className="text-center text-2xl md:text-3xl font-extrabold mb-12">
-          Meet Our<span className="text-[#6B0F10] px-2">Team</span>
-        </h2>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 justify-items-center">
-          {teamMembers.map((member) => (
-            <div
-              key={member.id}
-              className="bg-white rounded-lg shadow-md max-w-xs w-full overflow-hidden"
-            >
-              <Image
-                src={member.image}
-                alt={member.name}
-                width={300}
-                height={200}
-                className="w-full h-48 object-contain"
-              />
-              <div className="p-4 text-center">
-                <h3 className="font-bold text-lg">{member.name}</h3>
-                <p className="text-sm text-[#6B0F10] font-semibold">
-                  {member.role}
-                </p>
-                <p className="text-xs mt-2 text-gray-600">{member.text}</p>
+            <article className="card-surface p-8">
+              <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-full bg-[#FFFBD6] text-[#6B0F10]">
+                <Compass size={20} />
               </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Why Choose Us */}
-      <div className="w-full bg-[#F3F3F3] py-12 px-4 md:px-8">
-        <h2 className="text-center text-2xl md:text-3xl font-extrabold mb-12">
-          Why <span className="text-[#6B0F10]">Choose</span> Us
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto">
-          {[
-            {
-              title: "Ethical Process",
-              desc: "Transparent, honest guidance with no hidden fees or false promises.",
-            },
-            {
-              title: "Institutional Partnerships",
-              desc: "Strong relationships with Ghana's top universities and colleges.",
-            },
-            {
-              title: "Personalized Support",
-              desc: "Tailored guidance based on academic goals.",
-            },
-            {
-              title: "End-to-End Support",
-              desc: "Assistance from application to graduation.",
-            },
-          ].map((item, i) => (
-            <div key={i} className="flex items-start gap-4">
-              <Quote color="#6B0F10" />
-              <div>
-                <p className="font-bold text-md">{item.title}</p>
-                <p className="text-sm text-gray-600">{item.desc}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Accreditations */}
-      <div className="w-full bg-white py-12 px-4">
-        <h2 className="text-center text-2xl md:text-3xl font-extrabold mb-8">
-          Accreditations & <span className="text-[#6B0F10]">Endorsements</span>
-        </h2>
-        <div className="flex justify-center">
-          <div className="bg-white rounded-2xl shadow-md w-40 h-48 flex flex-col items-center justify-center p-4 hover:shadow-xl transition-all duration-300">
-            <Image
-              src="/moe.png"
-              width={120}
-              height={120}
-              alt="MOE Logo"
-              className="object-contain"
-            />
-            <p className="text-sm font-semibold mt-2">MOE</p>
+              <h2 className="text-2xl font-semibold text-slate-900">Our Vision</h2>
+              <p className="mt-4 text-sm leading-7 text-slate-600 md:text-base">
+                To become one of Africa&apos;s most respected education consultancies, known for ethical leadership,
+                strong institutional partnerships, and measurable student outcomes.
+              </p>
+            </article>
           </div>
         </div>
-      </div>
+      </section>
+
+      <section className="section-shell bg-[#f7f8fa]">
+        <div className="mx-auto w-full max-w-7xl">
+          <h2 className="section-heading text-center">
+            Our <span className="text-[#6B0F10]">Core Values</span>
+          </h2>
+          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {coreValues.map(({ title, desc, icon: Icon, tone }) => (
+              <article key={title} className="card-surface p-6">
+                <div className={`mb-4 inline-flex h-12 w-12 items-center justify-center rounded-full ${tone}`}>
+                  <Icon size={20} />
+                </div>
+                <h3 className="text-lg font-semibold text-slate-900">{title}</h3>
+                <p className="mt-3 text-sm leading-7 text-slate-600">{desc}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="section-shell">
+        <div className="mx-auto w-full max-w-7xl">
+          <h2 className="section-heading text-center">Meet Our Team</h2>
+          <div className="mt-12 grid gap-6 md:grid-cols-3">
+            {teamMembers.map((member) => (
+              <article key={member.id} className="card-surface overflow-hidden">
+                <div className="relative w-full aspect-[4/5]">
+                  <Image
+                    src={member.image}
+                    alt={member.name}
+                    fill
+                    className="object-cover object-top"
+                  />
+                </div>
+                <div className="p-6">
+                  <h3 className="text-xl font-semibold text-slate-900">{member.name}</h3>
+                  <p className="mt-1 text-sm font-medium text-[#6B0F10]">{member.role}</p>
+                  <p className="mt-3 text-sm leading-7 text-slate-600">{member.text}</p>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="section-shell bg-[#fffdf0]">
+        <div className="mx-auto w-full max-w-7xl">
+          <h2 className="section-heading text-center">Why Families Choose Us</h2>
+          <div className="mt-12 grid gap-6 md:grid-cols-2">
+            {[
+              {
+                title: "Ethical Advisory",
+                desc: "No hidden fees, no inflated promises, and transparent process guidance.",
+              },
+              {
+                title: "Strong Institutional Network",
+                desc: "Access to established partnerships with leading institutions in Ghana.",
+              },
+              {
+                title: "Personalized Support",
+                desc: "One-on-one recommendations based on your academic profile and goals.",
+              },
+              {
+                title: "End-to-End Delivery",
+                desc: "Support from shortlist and application to travel readiness and onboarding.",
+              },
+            ].map((item) => (
+              <article key={item.title} className="card-surface p-6">
+                <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#6B0F10]/10 text-[#6B0F10]">
+                  <Sparkles size={18} />
+                </div>
+                <h3 className="text-lg font-semibold text-slate-900">{item.title}</h3>
+                <p className="mt-3 text-sm leading-7 text-slate-600">{item.desc}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
     </div>
   );
 }

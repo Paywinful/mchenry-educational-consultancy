@@ -1,6 +1,7 @@
-'use client';
-import { useState } from 'react';
-import { ChevronDown } from 'lucide-react';
+"use client";
+
+import { useState } from "react";
+import { ChevronDown } from "lucide-react";
 
 interface FAQItemProps {
   question: string;
@@ -11,23 +12,22 @@ export default function FAQItem({ question, answer }: FAQItemProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className={`border border-gray-300 rounded-md mb-4 ${isOpen ? 'bg-gray-100' : 'bg-white'} `}>
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex justify-between items-center px-4 py-3 text-left font-semibold text-gray-800 focus:outline-none"
-      >
-        {question}
-        <ChevronDown
-          size={20}
-          className={`transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}
-          color='#6B0F10'
-        />
-      </button>
-      {isOpen && (
-        <div className="px-4 pb-4 text-sm text-gray-600">
-          {answer}
-        </div>
-      )}
+    <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition hover:shadow-md">
+      <h3>
+        <button
+          type="button"
+          onClick={() => setIsOpen((prev) => !prev)}
+          className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left"
+          aria-expanded={isOpen}
+        >
+          <span className="text-base font-semibold text-slate-900">{question}</span>
+          <ChevronDown
+            size={18}
+            className={`shrink-0 text-[#6B0F10] transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
+          />
+        </button>
+      </h3>
+      {isOpen && <div className="border-t border-slate-100 px-5 py-4 text-sm leading-7 text-slate-600">{answer}</div>}
     </div>
   );
 }

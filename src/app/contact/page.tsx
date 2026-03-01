@@ -1,185 +1,156 @@
-"use client";
+import { Clock3, Mail, MapPin, Phone } from "lucide-react";
 
-import Image from "next/image";
-import { Quote } from "lucide-react";
-
-export default function Contact() {
+export default function ContactPage() {
   return (
-    <div className="overflow-x-hidden">
-      {/* Hero Section */}
-      <div className="relative w-full h-72">
-        <Image
-          src="/about.png"
-          alt="Hero Section"
-          fill
-          className="object-cover z-0"
-          priority
-        />
-        <div className="absolute inset-0 bg-black/80 z-10" />
-        <div className="absolute inset-0 z-20 flex items-center justify-center px-8 text-center">
-          <div className="text-white max-w-2xl md:mt-32">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">Contact Us</h1>
-            <p className="text-md mb-10 md:mb-12 font-thin">
-              {` Ready to start your educational journey in Ghana? We're here to help! Reach out to us for personalized guidance and support.`}
+    <div className="bg-white">
+      <section className="section-shell bg-[#f8fafc]">
+        <div className="mx-auto w-full max-w-7xl">
+          <div className="max-w-3xl">
+            <h1 className="section-heading">Contact Our Admissions Team</h1>
+            <p className="section-subheading">
+              Ready to start your educational journey in Ghana? Share your goals and our team will guide you on the
+              next best step.
             </p>
           </div>
-        </div>
-      </div>
 
-      {/* Contact Card Section */}
-      <div className="w-full flex flex-col md:flex-row items-center justify-center gap-24 py-16 px-4 bg-white">
-        {/* Left Side: Image and Socials */}
-        <div className="flex flex-col items-center">
-          <Image
-            src="/member1.jpg"
-            alt="Smiling Woman"
-            width={300}
-            height={300}
-            className="rounded-lg object-cover"
-          />
-          <p className="mt-4 text-lg font-semibold">Follow Us</p>
-          <div className="flex gap-4 mt-2">
-            <a href="#" target="_blank" rel="noopener noreferrer">
-              <Image
-                src="/facebook.svg"
-                alt="Facebook"
-                width={32}
-                height={32}
-              />
-            </a>
-            <a href="#" target="_blank" rel="noopener noreferrer">
-              <Image
-                src="/instagram.svg"
-                alt="Instagram"
-                width={32}
-                height={32}
-              />
-            </a>
-            <a href="#" target="_blank" rel="noopener noreferrer">
-              <Image
-                src="/linkedin.svg"
-                alt="LinkedIn"
-                width={32}
-                height={32}
-              />
-            </a>
-            <a href="#" target="_blank" rel="noopener noreferrer">
-              <Image src="/twitter-x.svg" alt="X" width={32} height={32} />
-            </a>
-          </div>
-        </div>
+          <div className="mt-12 grid gap-8 xl:grid-cols-[1fr_1.05fr]">
+            <div className="space-y-6">
+              <article className="card-surface p-6 md:p-8">
+                <h2 className="text-2xl font-semibold text-slate-900">Get in Touch</h2>
+                <p className="mt-2 text-sm leading-7 text-slate-600">
+                  We respond to most inquiries within one business day.
+                </p>
 
-        {/* Right Side: Form */}
-        <div className="bg-[#F9F9F9] rounded-xl shadow-md p-8 w-full md:w-2/5">
-          <h2 className="text-2xl font-bold text-[#6B0F10] mb-6">
-            Send us a Message
-          </h2>
-          <form className="space-y-4">
-            <div>
-              <label className="block text-sm mb-1 font-semibold">
-                Full Name
-              </label>
-              <input
-                type="text"
-                placeholder="Enter your full name"
-                className="w-full p-2 border border-gray-300 rounded-md"
-              />
-            </div>
-            <div>
-              <label className="block text-sm mb-1 font-semibold">
-                Email Address
-              </label>
-              <input
-                type="email"
-                placeholder="Enter your email"
-                className="w-full p-2 border border-gray-300 rounded-md"
-              />
-            </div>
-            <div>
-              <label className="block text-sm mb-1 font-semibold">
-                Inquiry Type
-              </label>
-              <select className="w-full p-2 border border-gray-300 rounded-md">
-                <option>Select Inquiry type</option>
-                <option>Admissions</option>
-                <option>Scholarships</option>
-                <option>General Inquiry</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm mb-1 font-semibold">
-                Message
-              </label>
-              <textarea
-                rows={4}
-                placeholder="Tell us about your educational goals..."
-                className="w-full p-2 border border-gray-300 rounded-md"
-              />
-            </div>
-            <button
-              type="submit"
-              className="bg-[#6B0F10] text-white w-full py-2 rounded-md font-semibold hover:bg-[#500a0b]"
-            >
-              Send
-            </button>
-          </form>
-        </div>
-      </div>
+                <div className="mt-6 grid gap-4 sm:grid-cols-2">
+                  <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+                    <p className="mb-2 inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#FFFBD6] text-[#6B0F10]">
+                      <Phone size={16} />
+                    </p>
+                    <p className="text-sm font-semibold text-slate-900">Phone</p>
+                    <a href="tel:+233240846638" className="text-sm text-slate-600 transition hover:text-[#6B0F10]">
+                      +233 24 084 6638
+                    </a>
+                  </div>
 
-      {/* visit our office */}
-      <div className="w-full px-8 py-16 justify center items-center flex flex-col">
-        <h2 className="text-center text-3xl font-extrabold mb-12">
-          Visit Our <span className="text-[#6B0F10]">Office</span>
-        </h2>
-        <Image src="/map.jpg" alt="map" width={800} height={800} />
-      </div>
+                  <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+                    <p className="mb-2 inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#FFFBD6] text-[#6B0F10]">
+                      <Mail size={16} />
+                    </p>
+                    <p className="text-sm font-semibold text-slate-900">Email</p>
+                    <a href="mailto:info@mchenry.com" className="text-sm text-slate-600 transition hover:text-[#6B0F10]">
+                      info@mchenry.com
+                    </a>
+                  </div>
 
-      {/* Why Choose Us */}
-      <div className="w-full bg-[#F3F3F3] py-16 px-8">
-        <h2 className="text-center text-3xl text-[#6B0F10] font-extrabold mb-12">
-          Contact Information
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 max-w-6xl mx-auto space-y-16">
-          {/* Item 1 */}
-          <div className="flex items-start gap-4">
-            <Quote color="#6B0F10" />
-            <div>
-              <p className="font-bold text-md">Phone</p>
-              <p className="text-sm text-gray-600">+233 24 084 6638</p>
+                  <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+                    <p className="mb-2 inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#FFFBD6] text-[#6B0F10]">
+                      <MapPin size={16} />
+                    </p>
+                    <p className="text-sm font-semibold text-slate-900">Location</p>
+                    <p className="text-sm text-slate-600">Accra Mall Area, Accra, Ghana</p>
+                  </div>
+
+                  <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+                    <p className="mb-2 inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#FFFBD6] text-[#6B0F10]">
+                      <Clock3 size={16} />
+                    </p>
+                    <p className="text-sm font-semibold text-slate-900">Office Hours</p>
+                    <p className="text-sm text-slate-600">Mon-Fri: 8:00 AM-6:00 PM</p>
+                  </div>
+                </div>
+              </article>
+
+              <article className="card-surface p-6 md:p-8">
+                <h2 className="text-2xl font-semibold text-slate-900">Send Us a Message</h2>
+                <form className="mt-6 space-y-5" aria-label="Contact form">
+                  <div>
+                    <label htmlFor="fullName" className="mb-2 block text-sm font-medium text-slate-700">
+                      Full Name
+                    </label>
+                    <input
+                      id="fullName"
+                      name="fullName"
+                      type="text"
+                      placeholder="Enter your full name"
+                      className="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:border-[#6B0F10] focus:outline-none focus:ring-2 focus:ring-[#6B0F10]/20"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label htmlFor="email" className="mb-2 block text-sm font-medium text-slate-700">
+                      Email Address
+                    </label>
+                    <input
+                      id="email"
+                      name="email"
+                      type="email"
+                      placeholder="Enter your email"
+                      className="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:border-[#6B0F10] focus:outline-none focus:ring-2 focus:ring-[#6B0F10]/20"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label htmlFor="inquiryType" className="mb-2 block text-sm font-medium text-slate-700">
+                      Inquiry Type
+                    </label>
+                    <select
+                      id="inquiryType"
+                      name="inquiryType"
+                      className="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm text-slate-900 focus:border-[#6B0F10] focus:outline-none focus:ring-2 focus:ring-[#6B0F10]/20"
+                      required
+                      defaultValue=""
+                    >
+                      <option value="" disabled>
+                        Select inquiry type
+                      </option>
+                      <option value="admissions">Admissions</option>
+                      <option value="scholarships">Scholarships</option>
+                      <option value="general">General Inquiry</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label htmlFor="message" className="mb-2 block text-sm font-medium text-slate-700">
+                      Message
+                    </label>
+                    <textarea
+                      id="message"
+                      name="message"
+                      rows={5}
+                      placeholder="Tell us about your educational goals"
+                      className="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:border-[#6B0F10] focus:outline-none focus:ring-2 focus:ring-[#6B0F10]/20"
+                      required
+                    />
+                  </div>
+
+                  <button type="submit" className="btn-primary w-full rounded-xl">
+                    Send Message
+                  </button>
+                </form>
+              </article>
             </div>
-          </div>
 
-          {/* Item 2 */}
-          <div className="flex items-start gap-4">
-            <Quote color="#6B0F10" />
-            <div>
-              <p className="font-bold text-md">Email</p>
-              <p className="text-sm text-gray-600">info@mchenry.com</p>
-            </div>
-          </div>
-
-          {/* Item 3 */}
-          <div className="flex items-start gap-4">
-            <Quote color="#6B0F10" />
-            <div>
-              <p className="font-bold text-md">WhatsApp</p>
-              <p className="text-sm text-gray-600">+233 24 084 6638</p>
-            </div>
-          </div>
-
-          {/* Item 4 */}
-          <div className="flex items-start gap-4">
-            <Quote color="#6B0F10" />
-            <div>
-              <p className="font-bold text-md">Office Hours</p>
-              <p className="text-sm text-gray-600">
-                Mon - Fri: 8:00 AM - 6:00 PM <br />
-                Sat: 9:00 AM - 2:00 PM
+            <aside className="card-surface overflow-hidden p-4 sm:p-5">
+              <h2 className="px-2 pt-2 text-xl font-semibold text-slate-900">Visit Our Office</h2>
+              <p className="px-2 pt-2 text-sm leading-7 text-slate-600">
+                Find us near Accra Mall for in-person consultation and admissions support.
               </p>
-            </div>
+
+              <div className="mt-4 overflow-hidden rounded-2xl border border-slate-200 shadow-sm">
+                <iframe
+                  title="Map showing Accra Mall, Accra, Ghana"
+                  src="https://maps.google.com/maps?q=Accra%20Mall%2C%20Accra%2C%20Ghana&t=&z=14&ie=UTF8&iwloc=&output=embed"
+                  className="h-[420px] w-full md:h-[680px]"
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                />
+              </div>
+            </aside>
           </div>
         </div>
-      </div>
+      </section>
     </div>
   );
 }
