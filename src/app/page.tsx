@@ -41,7 +41,7 @@ export default function Home() {
                 universities
               </p>
               <div className="md:flex hidden gap-4">
-                <button onClick={()=>{route.push('/portal')}} className="bg-[#6B0F10] text-white px-8 py-1 text-xs md:px-12 md:py-2 rounded-3xl md:text-lg hover:border-[#6B0F10] hover:cursor-pointer hover:border hover:bg-transparent transition">
+                <button onClick={()=>{route.push('/contact')}} className="bg-[#6B0F10] text-white px-8 py-1 text-xs md:px-12 md:py-2 rounded-3xl md:text-lg hover:border-[#6B0F10] hover:cursor-pointer hover:border hover:bg-transparent transition">
                   Get Started
                 </button>
                 <button onClick={()=>{route.push('/contact')}} className="border border-[#6B0F10] text-white px-8 py-1 text-xs md:px-12 md:py-2 rounded-3xl md:text-lg hover:cursor-pointer hover:bg-[#6B0F10] transition">

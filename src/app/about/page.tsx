@@ -12,6 +12,31 @@ import {
 } from "lucide-react";
 
 export default function About() {
+  const teamMembers = [
+    {
+      id: 1,
+      image: "/members1.jpg",
+      name: "Henry Amankwah",
+      role: "Founder & CEO",
+      text: "Education is the passport to opportunity and every student deserves a chance to succeed.",
+
+    },
+    {
+      id: 2,
+      image: "/members2.jpg",
+      name: "Demarsha Sweety Mensah",
+      role: "Administrator",
+      text: "Success begins with courage, guidance, and the belief that your future can be greater than your past.",
+    },
+    {
+      id: 3,
+      image: "/members3.jpg",
+      name: "Daniel Mensah",
+      role: "Coordinator",
+      text: "When knowledge meets determination, nothing can stand in the way of your dreams.",
+    },
+  ];
+
   return (
     <div className="overflow-x-hidden">
       {/* Hero Section */}
@@ -49,10 +74,10 @@ export default function About() {
               F
             </span>
             ounded with a vision to bridge the gap between international
-            students and Ghana&apos;s prestigious educational institutions, McHenry
-            Educational Consultancy was born from the understanding that quality
-            education should be accessible to all, regardless of geographical
-            boundaries.
+            students and Ghana&apos;s prestigious educational institutions,
+            McHenry Educational Consultancy was born from the understanding that
+            quality education should be accessible to all, regardless of
+            geographical boundaries.
             <br />
             <br />
             Our journey began when we recognized the untapped potential of
@@ -85,7 +110,7 @@ export default function About() {
               borders. Dedicated to guiding students, families, and institutions
               through trusted advisory services, university placements, academic
               counseling, and capacity-building initiatives that foster personal
-              growth, global citizenship, and national development.
+              growth, global citizenship, and national development.
             </p>
           </div>
 
@@ -98,7 +123,7 @@ export default function About() {
               Become Africa’s leading educational consultancy firm, empowering
               future leaders through world-class partnerships, innovative
               guidance, and seamless access to transformative international
-              higher education opportunities.
+              higher education opportunities.
             </p>
           </div>
         </div>
@@ -156,31 +181,31 @@ export default function About() {
         </div>
       </div>
 
-      {/* Meet Our Team */}
+      {/* Meet Our Team (UPDATED) */}
       <div className="w-full py-12 px-4 md:px-10">
         <h2 className="text-center text-2xl md:text-3xl font-extrabold mb-12">
           Meet Our<span className="text-[#6B0F10] px-2">Team</span>
         </h2>
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 justify-items-center">
-          {[1, 2, 3].map((member) => (
+          {teamMembers.map((member) => (
             <div
-              key={member}
+              key={member.id}
               className="bg-white rounded-lg shadow-md max-w-xs w-full overflow-hidden"
             >
               <Image
-                src={`/member${member}.jpg`}
-                alt="Team Member"
+                src={member.image}
+                alt={member.name}
                 width={300}
                 height={200}
-                className="w-full h-48 object-cover"
+                className="w-full h-48 object-contain"
               />
               <div className="p-4 text-center">
-                <h3 className="font-bold text-lg">Michael McHenry</h3>
-                <p className="text-sm text-[#6B0F10] font-semibold">Teacher</p>
-                <p className="text-xs mt-2 text-gray-600">
-                  I checked my posting from my phone and downloaded my letter in
-                  minutes — no stress.
+                <h3 className="font-bold text-lg">{member.name}</h3>
+                <p className="text-sm text-[#6B0F10] font-semibold">
+                  {member.role}
                 </p>
+                <p className="text-xs mt-2 text-gray-600">{member.text}</p>
               </div>
             </div>
           ))}

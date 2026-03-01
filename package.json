@@ -13,9 +13,9 @@
     "@supabase/supabase-js": "^2.55.0",
     "axios": "^1.11.0",
     "lucide-react": "^0.513.0",
-    "next": "15.3.3",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
+    "next": "16.1.4",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
     "zod": "^4.0.17"
   },
   "devDependencies": {
