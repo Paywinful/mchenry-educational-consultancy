@@ -20,7 +20,7 @@ const teamMembers = [
   {
     id: 2,
     image: "/member1.jpg",
-    name: "Daniel Mensah",
+    name: "Henry Amankwah Junior",
     role: "CEO",
     text: "The right guidance at the right time can transform academic ambition into real outcomes.",
   },
@@ -30,7 +30,7 @@ const teamMembers = [
     name: "Demarsha Sweety Mensah",
     role: "Administrator",
     text: "When knowledge meets determination, nothing can stand in the way of your dreams.",
-  },
+  }
 ];
 
 const coreValues = [

@@ -1,5 +1,9 @@
 import { Clock3, Mail, MapPin, Phone } from "lucide-react";
 
+const officeAddress = "Accra Mall Area, Accra, Ghana";
+const embeddedMapSrc = "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d858.2186472992469!2d-0.17950787736407534!3d5.6015726671917!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xfdf9a536098817b%3A0x174def52ad156862!2sSGS%20Ghana%20-%20Accra!5e0!3m2!1sen!2sgh!4v1773422187534!5m2!1sen!2sgh";
+// const directionsUrl = "https://www.google.com/maps/search/?api=1&query=Accra+Mall+Area,+Accra,+Ghana";
+
 export default function ContactPage() {
   return (
     <div className="bg-white">
@@ -47,7 +51,7 @@ export default function ContactPage() {
                       <MapPin size={16} />
                     </p>
                     <p className="text-sm font-semibold text-slate-900">Location</p>
-                    <p className="text-sm text-slate-600">Accra Mall Area, Accra, Ghana</p>
+                    <p className="text-sm text-slate-600">{officeAddress}</p>
                   </div>
 
                   <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
@@ -137,12 +141,22 @@ export default function ContactPage() {
               <p className="px-2 pt-2 text-sm leading-7 text-slate-600">
                 Find us near Accra Mall for in-person consultation and admissions support.
               </p>
+              {/* <div className="px-2 pt-3">
+                <a
+                  href={directionsUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center text-sm font-medium text-[#6B0F10] transition hover:text-[#4f0b0c]"
+                >
+                  Open directions in Google Maps
+                </a>
+              </div> */}
 
               <div className="mt-4 overflow-hidden rounded-2xl border border-slate-200 shadow-sm">
                 <iframe
-                  title="Map showing Accra Mall, Accra, Ghana"
-                  src="https://maps.google.com/maps?q=Accra%20Mall%2C%20Accra%2C%20Ghana&t=&z=14&ie=UTF8&iwloc=&output=embed"
-                  className="h-[420px] w-full md:h-[680px]"
+                  title={`Map showing ${officeAddress}`}
+                  src={embeddedMapSrc}
+                  className="h-[450px] w-full md:h-[600px]"
                   loading="lazy"
                   referrerPolicy="no-referrer-when-downgrade"
                 />
